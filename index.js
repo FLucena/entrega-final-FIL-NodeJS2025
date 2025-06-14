@@ -24,7 +24,14 @@ app.use('/api/productos', productRoutes);
 app.use('/api/auth', authRoutes);
 
 app.get('/', (req, res) => {
-  res.send('API funcionando');
+  res.json({
+    message: 'API funcionando',
+    endpoints: [
+      '/api',
+      '/api/productos',
+      '/api/auth'
+    ]
+  });
 });
 
 // Manejador de errores global
