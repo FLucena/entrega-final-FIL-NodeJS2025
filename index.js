@@ -19,11 +19,17 @@ dotenv.config();
 const app = express();
 const PORT = process.env.PORT || 3000;
 
+// Configurar trust proxy para Vercel
+app.set('trust proxy', 1);
+
 // Configuración de rate limiter
 const limiter = rateLimit({
   windowMs: process.env.NODE_ENV === 'test' ? 1 : 15 * 60 * 1000, // 1ms for tests, 15 minutes for production
   max: process.env.NODE_ENV === 'test' ? 1000 : 100, // 1000 requests for tests, 100 for production
-  message: 'Demasiadas solicitudes desde esta IP, por favor intente más tarde'
+  message: 'Demasiadas solicitudes desde esta IP, por favor intente más tarde',
+  standardHeaders: true,
+  legacyHeaders: false,
+  trustProxy: true
 });
 
 // Configuración de rate limiter específico para autenticación
@@ -33,6 +39,7 @@ const authLimiter = rateLimit({
   message: 'Demasiados intentos de inicio de sesión, por favor intente más tarde',
   standardHeaders: true,
   legacyHeaders: false,
+  trustProxy: true
 });
 
 // Middleware de seguridad
