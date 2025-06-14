@@ -79,10 +79,18 @@ app.use((err, req, res, next) => {
   });
 });
 
-// Solo iniciar el servidor en desarrollo local
+// Solo iniciar el servidor si no estamos en Vercel
 if (process.env.NODE_ENV !== 'production') {
-  app.listen(PORT, () => {
+  const server = app.listen(PORT, () => {
     console.log(`Servidor escuchando en http://localhost:${PORT}`);
+  });
+
+  // Manejar el cierre del servidor
+  process.on('SIGTERM', () => {
+    console.log('SIGTERM signal received: closing HTTP server');
+    server.close(() => {
+      console.log('HTTP server closed');
+    });
   });
 }
 
