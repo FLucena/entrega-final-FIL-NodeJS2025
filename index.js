@@ -10,7 +10,7 @@ import rateLimit from 'express-rate-limit';
 import helmet from 'helmet';
 import corsOptions from './config/cors.js';
 
-const __filename = fileURLToPath(import.meta.URL);
+const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
 // Cargar variables de entorno
