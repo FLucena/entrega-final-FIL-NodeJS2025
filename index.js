@@ -5,7 +5,7 @@ import { fileURLToPath } from 'url';
 import { dirname } from 'path';
 import productRoutes from './routes/productRoutes.js';
 import authRoutes from './routes/authRoutes.js';
-import './config/firebase.js';
+import { db } from './config/firebase.js';
 import rateLimit from 'express-rate-limit';
 import helmet from 'helmet';
 import corsOptions from './config/cors.js';
