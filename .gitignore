@@ -6,6 +6,7 @@ node_modules/
 
 # Firebase credentials
 firebase-service-account.json
+serviceAccountKey.json
 
 # Logs
 *.log

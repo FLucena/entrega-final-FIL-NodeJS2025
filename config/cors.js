@@ -4,7 +4,7 @@ const allowedOrigins = [
   'http://127.0.0.1:3000',    // Localhost alternativo
   'http://127.0.0.1:5173',    // Vite alternativo
   'https://proyecto-final-ecommerce-francisco.vercel.app', // Dominio de producción
-  process.env.FRONTEND_URL,    // URL del frontend en producción
+  process.env.url,    // URL del frontend en producción
 ].filter(Boolean); // Filtra valores undefined/null
 
 const corsOptions = {

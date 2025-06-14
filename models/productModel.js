@@ -1,7 +1,7 @@
 import fs from 'fs';
 import path from 'path';
 
-const dataPath = path.join(path.dirname(new URL(import.meta.url).pathname), '../data/products.json');
+const dataPath = path.join(path.dirname(new URL(import.meta.URL).pathname), '../data/products.json');
 
 function readProducts() {
   if (!fs.existsSync(dataPath)) return [];
