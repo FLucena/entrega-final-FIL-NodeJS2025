@@ -61,10 +61,169 @@ Este proyecto es la **entrega final** para el curso de Node.js de Talento Tech. 
    # Modo desarrollo (con reinicio automático)
    npm run dev
    ```
-3. Usa herramientas como Postman o curl para interactuar con la API:
-   - Registro: `POST /api/auth/register` (body: email, password)
-   - Login: `POST /api/auth/login` (body: email, password)
-   - Todas las rutas de productos (`/api/productos`) requieren el header `Authorization: Bearer <token>`
+
+## Guía de Pruebas con Postman
+
+### Configuración Inicial
+
+1. **Crear una colección:**
+   - Abre Postman
+   - Crea una nueva colección llamada "API Productos"
+   - Crea dos carpetas: "Auth" y "Productos"
+
+2. **Configurar variables de entorno:**
+   - Crea un nuevo entorno (Environment)
+   - Agrega las siguientes variables:
+     - `baseUrl`: `http://localhost:3000/api`
+     - `token`: (déjalo vacío por ahora)
+
+### Endpoints Disponibles
+
+#### 1. Autenticación (No requiere token)
+
+##### Registro de Usuario
+```
+POST {{baseUrl}}/auth/register
+Content-Type: application/json
+
+{
+    "email": "usuario@ejemplo.com",
+    "password": "123456",
+    "name": "Usuario Ejemplo"
+}
+```
+
+##### Inicio de Sesión
+```
+POST {{baseUrl}}/auth/login
+Content-Type: application/json
+
+{
+    "email": "usuario@ejemplo.com",
+    "password": "123456"
+}
+```
+- Guarda el token recibido en la respuesta para usarlo en las siguientes peticiones.
+
+#### 2. Productos (Requiere token)
+
+##### Obtener todos los productos
+```
+GET {{baseUrl}}/products
+```
+
+##### Obtener un producto por ID
+```
+GET {{baseUrl}}/products/:id
+```
+
+##### Crear un producto
+```
+POST {{baseUrl}}/products
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+    "name": "Producto Ejemplo",
+    "description": "Descripción del producto",
+    "price": 99.99,
+    "stock": 100
+}
+```
+
+##### Actualizar un producto
+```
+PUT {{baseUrl}}/products/:id
+Authorization: Bearer {{token}}
+Content-Type: application/json
+
+{
+    "name": "Producto Actualizado",
+    "description": "Nueva descripción",
+    "price": 149.99,
+    "stock": 50
+}
+```
+
+##### Eliminar un producto
+```
+DELETE {{baseUrl}}/products/:id
+Authorization: Bearer {{token}}
+```
+
+### Flujo de Prueba Recomendado
+
+1. **Registro de Usuario:**
+   - Ejecuta la petición de registro
+   - Verifica que recibas un token en la respuesta
+
+2. **Inicio de Sesión:**
+   - Ejecuta la petición de login
+   - Copia el token recibido
+   - Configura el token en la variable de entorno `token`
+
+3. **Operaciones CRUD:**
+   - Prueba crear un nuevo producto
+   - Lista todos los productos
+   - Obtén un producto específico por ID
+   - Actualiza el producto creado
+   - Elimina el producto
+
+### Headers Comunes
+
+- Para todas las peticiones:
+  ```
+  Content-Type: application/json
+  ```
+
+- Para peticiones autenticadas:
+  ```
+  Authorization: Bearer {{token}}
+  ```
+
+### Respuestas Esperadas
+
+- **Registro/Login Exitoso:**
+  ```json
+  {
+    "message": "Usuario registrado correctamente",
+    "token": "jwt-token-here",
+    "user": {
+      "id": "user-id",
+      "email": "usuario@ejemplo.com",
+      "name": "Usuario Ejemplo"
+    }
+  }
+  ```
+
+- **Producto Creado:**
+  ```json
+  {
+    "message": "Producto creado correctamente",
+    "product": {
+      "id": "product-id",
+      "name": "Producto Ejemplo",
+      "description": "Descripción del producto",
+      "price": 99.99,
+      "stock": 100,
+      "createdAt": "2024-03-14T12:00:00.000Z"
+    }
+  }
+  ```
+
+### Solución de Problemas
+
+1. **Error 401 (Unauthorized):**
+   - Verifica que el token esté correctamente configurado
+   - Asegúrate de incluir el prefijo "Bearer" antes del token
+
+2. **Error 400 (Bad Request):**
+   - Verifica que todos los campos requeridos estén presentes
+   - Asegúrate de que los tipos de datos sean correctos
+
+3. **Error 404 (Not Found):**
+   - Verifica que la URL sea correcta
+   - Asegúrate de que el ID del producto exista
 
 ## Agradecimientos
 

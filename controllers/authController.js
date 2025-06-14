@@ -237,6 +237,7 @@ export const login = async (req, res) => {
         .get();
 
       if (userSnapshot.empty) {
+        console.log('Usuario no encontrado:', email);
         return res.status(401).json({ 
           error: 'Credenciales inválidas',
           message: 'Email o contraseña incorrectos'
@@ -246,8 +247,16 @@ export const login = async (req, res) => {
       const userDoc = userSnapshot.docs[0];
       const userData = userDoc.data();
 
+      console.log('Usuario encontrado:', {
+        id: userDoc.id,
+        email: userData.email,
+        hasPassword: !!userData.password
+      });
+
       // Verificar contraseña
       const validPassword = await bcrypt.compare(password, userData.password);
+      console.log('Resultado de comparación de contraseña:', validPassword);
+
       if (!validPassword) {
         return res.status(401).json({ 
           error: 'Credenciales inválidas',
