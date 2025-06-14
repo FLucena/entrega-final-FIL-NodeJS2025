@@ -41,7 +41,7 @@ describe('Product Endpoints', () => {
     );
   });
 
-  describe('GET /api/productos', () => {
+  describe('GET /api/products', () => {
     it('should get all products', async () => {
       // Mock products collection
       mockFirestore.get.mockResolvedValueOnce({
@@ -54,20 +54,20 @@ describe('Product Endpoints', () => {
       });
 
       const response = await request(app)
-        .get('/api/productos');
+        .get('/api/products');
 
       expect(response.status).toBe(200);
       expect(Array.isArray(response.body)).toBe(true);
     });
   });
 
-  describe('POST /api/productos', () => {
+  describe('POST /api/products', () => {
     it('should create a new product', async () => {
       // Mock product creation
       mockFirestore.add.mockResolvedValueOnce({ id: 'test-id' });
 
       const response = await request(app)
-        .post('/api/productos')
+        .post('/api/products')
         .set('Authorization', `Bearer ${authToken}`)
         .send(productData);
 
@@ -78,7 +78,7 @@ describe('Product Endpoints', () => {
 
     it('should not create product without auth token', async () => {
       const response = await request(app)
-        .post('/api/productos')
+        .post('/api/products')
         .send(productData);
 
       expect(response.status).toBe(401);
@@ -86,7 +86,7 @@ describe('Product Endpoints', () => {
     });
   });
 
-  describe('GET /api/productos/:id', () => {
+  describe('GET /api/products/:id', () => {
     it('should get product by id', async () => {
       // Mock product retrieval
       mockFirestore.get.mockResolvedValueOnce({
@@ -96,7 +96,7 @@ describe('Product Endpoints', () => {
       });
 
       const response = await request(app)
-        .get(`/api/productos/${testProductId}`);
+        .get(`/api/products/${testProductId}`);
 
       expect(response.status).toBe(200);
       expect(response.body).toHaveProperty('id', testProductId);
@@ -109,14 +109,14 @@ describe('Product Endpoints', () => {
       });
 
       const response = await request(app)
-        .get('/api/productos/nonexistent-id');
+        .get('/api/products/nonexistent-id');
 
       expect(response.status).toBe(404);
       expect(response.body).toHaveProperty('error');
     });
   });
 
-  describe('PUT /api/productos/:id', () => {
+  describe('PUT /api/products/:id', () => {
     it('should update product', async () => {
       const updateData = {
         name: 'Updated Product',
@@ -127,7 +127,7 @@ describe('Product Endpoints', () => {
       mockFirestore.update.mockResolvedValueOnce({});
 
       const response = await request(app)
-        .put(`/api/productos/${testProductId}`)
+        .put(`/api/products/${testProductId}`)
         .set('Authorization', `Bearer ${authToken}`)
         .send(updateData);
 
@@ -138,7 +138,7 @@ describe('Product Endpoints', () => {
 
     it('should not update product without auth token', async () => {
       const response = await request(app)
-        .put(`/api/productos/${testProductId}`)
+        .put(`/api/products/${testProductId}`)
         .send({ name: 'Updated Product' });
 
       expect(response.status).toBe(401);
@@ -146,13 +146,13 @@ describe('Product Endpoints', () => {
     });
   });
 
-  describe('DELETE /api/productos/:id', () => {
+  describe('DELETE /api/products/:id', () => {
     it('should delete product', async () => {
       // Mock product deletion
       mockFirestore.delete.mockResolvedValueOnce({});
 
       const response = await request(app)
-        .delete(`/api/productos/${testProductId}`)
+        .delete(`/api/products/${testProductId}`)
         .set('Authorization', `Bearer ${authToken}`);
 
       expect(response.status).toBe(200);
@@ -160,7 +160,7 @@ describe('Product Endpoints', () => {
 
     it('should not delete product without auth token', async () => {
       const response = await request(app)
-        .delete(`/api/productos/${testProductId}`);
+        .delete(`/api/products/${testProductId}`);
 
       expect(response.status).toBe(401);
       expect(response.body).toHaveProperty('error');

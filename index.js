@@ -54,7 +54,7 @@ app.use(express.json());
 app.use(limiter);
 
 // Rutas
-app.use('/api/productos', productRoutes);
+app.use('/api/products', productRoutes);
 app.use('/api/auth', authLimiter, authRoutes);
 
 // Ruta de health check para Vercel
@@ -66,7 +66,7 @@ app.get('/', (req, res) => {
   res.json({
     message: 'API funcionando',
     endpoints: [
-      '/api/productos',
+      '/api/products',
       '/api/auth'
     ]
   });
@@ -90,11 +90,36 @@ if (process.env.NODE_ENV !== 'production' && process.env.NODE_ENV !== 'test') {
     console.log(`Servidor escuchando en http://localhost:${PORT}`);
   });
 
-  process.on('SIGTERM', () => {
-    console.log('SIGTERM signal received: closing HTTP server');
+  // Manejo de señales para cierre limpio
+  const gracefulShutdown = async () => {
+    console.log('Cerrando servidor...');
+    
+    // Cerrar el servidor HTTP
     server.close(() => {
-      console.log('HTTP server closed');
+      console.log('Servidor HTTP cerrado');
+      process.exit(0);
     });
+
+    // Si después de 10 segundos no se cierra, forzar el cierre
+    setTimeout(() => {
+      console.error('No se pudo cerrar el servidor a tiempo, forzando cierre...');
+      process.exit(1);
+    }, 10000);
+  };
+
+  // Manejar señales de terminación
+  process.on('SIGTERM', gracefulShutdown);
+  process.on('SIGINT', gracefulShutdown);
+
+  // Manejar errores no capturados
+  process.on('uncaughtException', (err) => {
+    console.error('Error no capturado:', err);
+    gracefulShutdown();
+  });
+
+  process.on('unhandledRejection', (err) => {
+    console.error('Promesa rechazada no manejada:', err);
+    gracefulShutdown();
   });
 }
 

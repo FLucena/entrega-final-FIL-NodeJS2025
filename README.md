@@ -69,7 +69,7 @@ Este proyecto es la **entrega final** para el curso de Node.js de Talento Tech. 
 1. **Crear una colección:**
    - Abre Postman
    - Crea una nueva colección llamada "API Productos"
-   - Crea dos carpetas: "Auth" y "Productos"
+   - Crea dos carpetas: "Auth" y "Products"
 
 2. **Configurar variables de entorno:**
    - Crea un nuevo entorno (Environment)
@@ -105,7 +105,7 @@ Content-Type: application/json
 ```
 - Guarda el token recibido en la respuesta para usarlo en las siguientes peticiones.
 
-#### 2. Productos (Requiere token)
+#### 2. Products (Requiere token)
 
 ##### Obtener todos los productos
 ```
