@@ -2,7 +2,7 @@ import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
 import { fileURLToPath } from 'url';
-import { dirname } from 'path';
+import { dirname, join } from 'path';
 import productRoutes from './routes/productRoutes.js';
 import authRoutes from './routes/authRoutes.js';
 import { db } from './config/firebase.js';
@@ -21,17 +21,15 @@ const PORT = process.env.PORT || 3000;
 
 // Configuración de rate limiter
 const limiter = rateLimit({
-  windowMs: 15 * 60 * 1000, // 15 minutos
-  max: 100, // límite de 100 peticiones por ventana
-  message: 'Demasiadas peticiones desde esta IP, por favor intente más tarde',
-  standardHeaders: true,
-  legacyHeaders: false,
+  windowMs: process.env.NODE_ENV === 'test' ? 1 : 15 * 60 * 1000, // 1ms for tests, 15 minutes for production
+  max: process.env.NODE_ENV === 'test' ? 1000 : 100, // 1000 requests for tests, 100 for production
+  message: 'Demasiadas solicitudes desde esta IP, por favor intente más tarde'
 });
 
 // Configuración de rate limiter específico para autenticación
 const authLimiter = rateLimit({
-  windowMs: 60 * 60 * 1000, // 1 hora
-  max: 5, // límite de 5 intentos por hora
+  windowMs: process.env.NODE_ENV === 'test' ? 1 : 60 * 60 * 1000, // 1ms for tests, 1 hour for production
+  max: process.env.NODE_ENV === 'test' ? 1000 : 5, // 1000 requests for tests, 5 for production
   message: 'Demasiados intentos de inicio de sesión, por favor intente más tarde',
   standardHeaders: true,
   legacyHeaders: false,
@@ -79,20 +77,6 @@ app.use((err, req, res, next) => {
   });
 });
 
-// Solo iniciar el servidor si no estamos en Vercel
-if (process.env.NODE_ENV !== 'production') {
-  const server = app.listen(PORT, () => {
-    console.log(`Servidor escuchando en http://localhost:${PORT}`);
-  });
-
-  // Manejar el cierre del servidor
-  process.on('SIGTERM', () => {
-    console.log('SIGTERM signal received: closing HTTP server');
-    server.close(() => {
-      console.log('HTTP server closed');
-    });
-  });
-}
-
-// Exportar la app para Vercel
+// Exportar la app para Vercel y testing
+export { app };
 export default app;
