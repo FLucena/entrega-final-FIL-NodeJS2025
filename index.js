@@ -13,6 +13,7 @@ import corsOptions from './config/cors.js';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
+// Cargar variables de entorno
 dotenv.config();
 
 const app = express();
@@ -23,8 +24,8 @@ const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutos
   max: 100, // límite de 100 peticiones por ventana
   message: 'Demasiadas peticiones desde esta IP, por favor intente más tarde',
-  standardHeaders: true, // Return rate limit info in the `RateLimit-*` headers
-  legacyHeaders: false, // Disable the `X-RateLimit-*` headers
+  standardHeaders: true,
+  legacyHeaders: false,
 });
 
 // Configuración de rate limiter específico para autenticación
@@ -49,8 +50,12 @@ app.use(limiter);
 
 // Rutas
 app.use('/api/productos', productRoutes);
-// Aplicar rate limiter específico a las rutas de autenticación
 app.use('/api/auth', authLimiter, authRoutes);
+
+// Ruta de health check para Vercel
+app.get('/health', (req, res) => {
+  res.status(200).json({ status: 'ok' });
+});
 
 app.get('/', (req, res) => {
   res.json({
@@ -64,7 +69,7 @@ app.get('/', (req, res) => {
 
 // Manejador de errores global mejorado
 app.use((err, req, res, next) => {
-  console.error(err.stack);
+  console.error('Error:', err);
   const statusCode = err.statusCode || 500;
   const message = err.message || 'Error interno del servidor';
   res.status(statusCode).json({ 
@@ -74,12 +79,12 @@ app.use((err, req, res, next) => {
   });
 });
 
-// Para desarrollo local
+// Solo iniciar el servidor en desarrollo local
 if (process.env.NODE_ENV !== 'production') {
   app.listen(PORT, () => {
     console.log(`Servidor escuchando en http://localhost:${PORT}`);
   });
 }
 
-// Para Vercel
+// Exportar la app para Vercel
 export default app;
