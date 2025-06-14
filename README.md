@@ -75,10 +75,9 @@ Gracias a Talento Tech y a los instructores por el acompañamiento y los conocim
 1. Crea un proyecto en [Firebase Console](https://console.firebase.google.com/)
 2. Ve a Configuración del Proyecto > Cuentas de servicio
 3. Genera una nueva clave privada
-4. Renombra el archivo descargado a `firebase-service-account.json`
-5. Coloca el archivo en la raíz del proyecto
+4. Copia los valores de las credenciales para configurar las variables de entorno
 
-**Nota:** El archivo `firebase-service-account.json` contiene credenciales sensibles y está incluido en `.gitignore`. No lo subas al repositorio.
+**Nota:** Las credenciales de Firebase son sensibles y deben manejarse a través de variables de entorno. No subas las credenciales directamente al repositorio.
 
 ## Configuración de Variables de Entorno
 
