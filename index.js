@@ -77,6 +77,20 @@ app.use((err, req, res, next) => {
   });
 });
 
+// Iniciar el servidor solo si no estamos en producción o en modo test
+if (process.env.NODE_ENV !== 'production' && process.env.NODE_ENV !== 'test') {
+  const server = app.listen(PORT, () => {
+    console.log(`Servidor escuchando en http://localhost:${PORT}`);
+  });
+
+  process.on('SIGTERM', () => {
+    console.log('SIGTERM signal received: closing HTTP server');
+    server.close(() => {
+      console.log('HTTP server closed');
+    });
+  });
+}
+
 // Exportar la app para Vercel y testing
 export { app };
 export default app;

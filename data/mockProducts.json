@@ -1,0 +1,44 @@
+{
+  "products": [
+    {
+      "id": "1",
+      "name": "Smartphone XYZ",
+      "description": "Último modelo con cámara de alta resolución",
+      "price": 699.99,
+      "stock": 50,
+      "createdAt": "2024-03-15T10:00:00Z"
+    },
+    {
+      "id": "2",
+      "name": "Laptop Pro",
+      "description": "Potente laptop para profesionales",
+      "price": 1299.99,
+      "stock": 30,
+      "createdAt": "2024-03-15T10:30:00Z"
+    },
+    {
+      "id": "3",
+      "name": "Auriculares Bluetooth",
+      "description": "Sonido premium con cancelación de ruido",
+      "price": 199.99,
+      "stock": 100,
+      "createdAt": "2024-03-15T11:00:00Z"
+    },
+    {
+      "id": "4",
+      "name": "Smartwatch",
+      "description": "Monitor de actividad física y notificaciones",
+      "price": 249.99,
+      "stock": 75,
+      "createdAt": "2024-03-15T11:30:00Z"
+    },
+    {
+      "id": "5",
+      "name": "Tablet Ultra",
+      "description": "Pantalla retina y procesador de última generación",
+      "price": 499.99,
+      "stock": 40,
+      "createdAt": "2024-03-15T12:00:00Z"
+    }
+  ]
+} 
