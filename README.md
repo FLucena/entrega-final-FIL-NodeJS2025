@@ -53,7 +53,13 @@ Este proyecto es la **entrega final** para el curso de Node.js de Talento Tech. 
    ```
 2. Inicia el servidor:
    ```bash
+   # Modo producción
+   npm start
+   # o
    node index.js
+
+   # Modo desarrollo (con reinicio automático)
+   npm run dev
    ```
 3. Usa herramientas como Postman o curl para interactuar con la API:
    - Registro: `POST /api/auth/register` (body: email, password)
@@ -85,16 +91,6 @@ Gracias a Talento Tech y a los instructores por el acompañamiento y los conocim
 2. Navega a "Environment Variables"
 3. Agrega cada variable de entorno con sus respectivos valores
 4. Para la `FIREBASE_PRIVATE_KEY`, asegúrate de escapar los saltos de línea con `\n`
-
-### Despliegue en Railway
-1. Ve a la sección "Variables" de tu proyecto
-2. Agrega cada variable de entorno con sus respectivos valores
-3. Para la `FIREBASE_PRIVATE_KEY`, asegúrate de escapar los saltos de línea con `\n`
-
-### Despliegue en Render
-1. Ve a la sección "Environment" de tu servicio
-2. Agrega cada variable de entorno con sus respectivos valores
-3. Para la `FIREBASE_PRIVATE_KEY`, asegúrate de escapar los saltos de línea con `\n`
 
 **Nota:** Nunca subas el archivo `.env` al repositorio. Está incluido en `.gitignore` por seguridad.
 
