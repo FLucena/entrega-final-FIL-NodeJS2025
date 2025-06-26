@@ -1,8 +1,8 @@
-import express from 'express';
+import { Router } from 'express';
 import { getProducts, getProductById, createProduct, updateProduct, deleteProduct } from '../controllers/productController.js';
 import { verifyToken } from '../middleware/auth.js';
 
-const router = express.Router();
+const router = Router();
 
 router.get('/', getProducts);
 router.get('/:id', getProductById);
