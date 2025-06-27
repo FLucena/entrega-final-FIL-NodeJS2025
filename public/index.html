@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Productos - API</title>
+    <link rel="stylesheet" href="styles.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1><i class="fas fa-box"></i> Gestión de Productos</h1>
+            <p>Interfaz para interactuar con la API RESTful</p>
+        </header>
+
+        <!-- Sección de Login -->
+        <section id="loginSection" class="login-section">
+            <div class="card">
+                <h2><i class="fas fa-sign-in-alt"></i> Iniciar Sesión</h2>
+                <p class="login-description">Necesitas autenticarte para gestionar productos</p>
+                
+                <form id="loginForm" class="login-form">
+                    <div class="form-group">
+                        <label for="loginEmail">Email:</label>
+                        <input type="email" id="loginEmail" name="email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="loginPassword">Contraseña:</label>
+                        <input type="password" id="loginPassword" name="password" required autocomplete="current-password">
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-sign-in-alt"></i> Iniciar Sesión
+                        </button>
+                        <button type="button" id="showRegister" class="btn btn-outline">
+                            <i class="fas fa-user-plus"></i> Registrarse
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </section>
+
+        <!-- Sección de Registro -->
+        <section id="registerSection" class="register-section" style="display: none;">
+            <div class="card">
+                <h2><i class="fas fa-user-plus"></i> Registro de Usuario</h2>
+                <p class="register-description">Crea una nueva cuenta para acceder al sistema</p>
+                
+                <form id="registerForm" class="register-form">
+                    <div class="form-group">
+                        <label for="registerName">Nombre:</label>
+                        <input type="text" id="registerName" name="name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="registerEmail">Email:</label>
+                        <input type="email" id="registerEmail" name="email" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="registerPassword">Contraseña:</label>
+                        <input type="password" id="registerPassword" name="password" required autocomplete="new-password">
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-user-plus"></i> Registrarse
+                        </button>
+                        <button type="button" id="showLogin" class="btn btn-outline">
+                            <i class="fas fa-sign-in-alt"></i> Ya tengo cuenta
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </section>
+
+        <!-- Contenido Principal (solo visible cuando está autenticado) -->
+        <main id="mainContent" class="main-content" style="display: none;">
+            <!-- Sección de información del usuario -->
+            <section class="user-info-section">
+                <div class="card">
+                    <div class="user-info">
+                        <div class="user-details">
+                            <h3><i class="fas fa-user"></i> <span id="userName">Usuario</span></h3>
+                            <p id="userEmail">usuario@ejemplo.com</p>
+                        </div>
+                        <button id="logoutBtn" class="btn btn-outline btn-sm">
+                            <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Sección de formulario para crear/editar productos -->
+            <section class="form-section">
+                <div class="card">
+                    <h2><i class="fas fa-plus"></i> Crear/Editar Producto</h2>
+                    <form id="productForm" class="product-form">
+                        <div class="form-group">
+                            <label for="productName">Nombre del Producto:</label>
+                            <input type="text" id="productName" name="name" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="productDescription">Descripción:</label>
+                            <textarea id="productDescription" name="description" required></textarea>
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label for="productPrice">Precio ($):</label>
+                                <input type="number" id="productPrice" name="price" step="0.01" min="0" required>
+                            </div>
+                            <div class="form-group">
+                                <label for="productStock">Stock:</label>
+                                <input type="number" id="productStock" name="stock" min="0" required>
+                            </div>
+                        </div>
+                        <div class="form-actions">
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-save"></i> Guardar Producto
+                            </button>
+                            <button type="button" id="cancelEdit" class="btn btn-secondary" style="display: none;">
+                                <i class="fas fa-times"></i> Cancelar
+                            </button>
+                        </div>
+                    </form>
+                </div>
+            </section>
+
+            <!-- Sección de lista de productos -->
+            <section class="products-section">
+                <div class="card">
+                    <div class="section-header">
+                        <h2><i class="fas fa-list"></i> Lista de Productos</h2>
+                        <button id="refreshProducts" class="btn btn-outline">
+                            <i class="fas fa-sync-alt"></i> Actualizar
+                        </button>
+                    </div>
+                    
+                    <div id="loadingProducts" class="loading">
+                        <i class="fas fa-spinner fa-spin"></i> Cargando productos...
+                    </div>
+                    
+                    <div id="productsList" class="products-grid"></div>
+                    
+                    <div id="noProducts" class="no-products" style="display: none;">
+                        <i class="fas fa-box-open"></i>
+                        <p>No hay productos disponibles</p>
+                    </div>
+                </div>
+            </section>
+        </main>
+
+        <!-- Modal para confirmar eliminación -->
+        <div id="deleteModal" class="modal">
+            <div class="modal-content">
+                <h3><i class="fas fa-exclamation-triangle"></i> Confirmar Eliminación</h3>
+                <p>¿Estás seguro de que quieres eliminar este producto?</p>
+                <p><strong id="deleteProductName"></strong></p>
+                <div class="modal-actions">
+                    <button id="confirmDelete" class="btn btn-danger">
+                        <i class="fas fa-trash"></i> Eliminar
+                    </button>
+                    <button id="cancelDelete" class="btn btn-secondary">
+                        <i class="fas fa-times"></i> Cancelar
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <!-- Notificaciones -->
+        <div id="notifications" class="notifications"></div>
+    </div>
+
+    <script src="script.js"></script>
+</body>
+</html> 

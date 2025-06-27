@@ -43,17 +43,31 @@ const authLimiter = rateLimit({
 });
 
 // Middleware de seguridad
-app.use(helmet());
+app.use(helmet({
+  contentSecurityPolicy: {
+    directives: {
+      defaultSrc: ["'self'"],
+      styleSrc: ["'self'", "'unsafe-inline'", "https://cdnjs.cloudflare.com"],
+      fontSrc: ["'self'", "https://cdnjs.cloudflare.com"],
+      scriptSrc: ["'self'", "'unsafe-inline'"],
+      scriptSrcAttr: ["'unsafe-inline'"],
+      imgSrc: ["'self'", "data:", "https:"],
+    },
+  },
+}));
 
 // Configuración CORS
 app.use(cors(corsOptions));
 
 app.use(express.json());
 
+// Servir archivos estáticos desde la carpeta public
+app.use(express.static(join(__dirname, 'public')));
+
 // Aplicar rate limiter general a todas las rutas
 app.use(limiter);
 
-// Rutas
+// Rutas de la API
 app.use('/api/products', productRoutes);
 app.use('/api/auth', authLimiter, authRoutes);
 
@@ -62,14 +76,14 @@ app.get('/health', (req, res) => {
   res.status(200).json({ status: 'ok' });
 });
 
+// Ruta principal - servir el frontend
 app.get('/', (req, res) => {
-  res.json({
-    message: 'API funcionando',
-    endpoints: [
-      '/api/products',
-      '/api/auth'
-    ]
-  });
+  res.sendFile(join(__dirname, 'public', 'index.html'));
+});
+
+// Ruta para cualquier otra ruta - servir el frontend (SPA)
+app.get('*', (req, res) => {
+  res.sendFile(join(__dirname, 'public', 'index.html'));
 });
 
 // Manejador de errores global mejorado

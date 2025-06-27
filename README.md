@@ -4,6 +4,36 @@
 
 Este proyecto es la **entrega final** para el curso de Node.js de Talento Tech. El objetivo es diseñar, desarrollar y desplegar una API RESTful funcional que permita gestionar los productos de una tienda en línea (E-Commerce). El sistema permite a usuarios autorizados realizar operaciones CRUD (Crear, Leer, Actualizar, Eliminar) sobre los productos, almacenando los datos tanto localmente (en archivos JSON) como en la nube (Firebase/Firestore).
 
+## 🎨 Frontend Integrado
+
+El proyecto incluye un **frontend moderno y responsivo** que permite interactuar con la API de manera visual e intuitiva.
+
+### Características del Frontend
+
+- **Interfaz Moderna**: Diseño responsivo con gradientes y animaciones suaves
+- **Gestión Completa**: CRUD completo de productos con formularios intuitivos
+- **Indicadores Visuales**: Badges de stock, notificaciones y estados de carga
+- **Experiencia de Usuario**: Modal de confirmación, validación en tiempo real
+- **Responsive Design**: Optimizado para desktop, tablet y móvil
+
+### Acceso al Frontend
+
+Una vez que el servidor esté ejecutándose, puedes acceder al frontend en:
+```
+http://localhost:3000
+```
+
+### Funcionalidades del Frontend
+
+1. **Ver Productos**: Lista todos los productos con información detallada
+2. **Crear Productos**: Formulario para agregar nuevos productos
+3. **Editar Productos**: Modificar información existente
+4. **Eliminar Productos**: Eliminar con confirmación
+5. **Indicadores de Stock**: Visualización del estado del inventario
+6. **Notificaciones**: Feedback visual para todas las operaciones
+
+Para más detalles sobre el frontend, consulta la documentación en `public/README.md`.
+
 ## Estructura del Proyecto
 
 - `/controllers`: Contiene la lógica de negocio (controladores de productos, autenticación, etc).
@@ -11,6 +41,7 @@ Este proyecto es la **entrega final** para el curso de Node.js de Talento Tech. 
 - `/models`: Define la estructura de los datos y el acceso a ellos.
 - `/services`: Gestiona el acceso a datos y la interacción con la base de datos (opcional).
 - `/data`: Archivos JSON que simulan la base de datos local.
+- `/public`: Frontend de la aplicación (HTML, CSS, JavaScript).
 - `index.js`: Punto de entrada del servidor Express.
 
 ## Funcionalidades
