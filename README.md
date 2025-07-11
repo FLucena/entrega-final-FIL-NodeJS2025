@@ -225,7 +225,7 @@ curl -X GET http://localhost:3000/api/products
 
 ### 5. Actualizar Producto Parcialmente (Requiere Token)
 ```bash
-curl -X PATCH http://localhost:3000/api/products/1 \
+curl -X PATCH http://localhost:3000/api/products/:id \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer TU_TOKEN_JWT" \
   -d '{
@@ -236,7 +236,7 @@ curl -X PATCH http://localhost:3000/api/products/1 \
 
 ### 6. Actualizar Producto Completo (Requiere Token)
 ```bash
-curl -X PUT http://localhost:3000/api/products/1 \
+curl -X PUT http://localhost:3000/api/products/:id \
   -H "Content-Type: application/json" \
   -H "Authorization: Bearer TU_TOKEN_JWT" \
   -d '{
@@ -249,7 +249,7 @@ curl -X PUT http://localhost:3000/api/products/1 \
 
 ### 7. Eliminar Producto (Requiere Token)
 ```bash
-curl -X DELETE http://localhost:3000/api/products/1 \
+curl -X DELETE http://localhost:3000/api/products/:id \
   -H "Authorization: Bearer TU_TOKEN_JWT"
 ```
 
