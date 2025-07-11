@@ -9,40 +9,36 @@ import { db } from './config/firebase.js';
 import rateLimit from 'express-rate-limit';
 import helmet from 'helmet';
 import corsOptions from './config/cors.js';
+import { createServer } from 'http';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-// Cargar variables de entorno
 dotenv.config();
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = Number(process.env.PORT) || 3000;
 
-// Configurar trust proxy para Vercel
 app.set('trust proxy', 1);
 
-// Configuración de rate limiter
 const limiter = rateLimit({
-  windowMs: process.env.NODE_ENV === 'test' ? 1 : 15 * 60 * 1000, // 1ms for tests, 15 minutes for production
-  max: process.env.NODE_ENV === 'test' ? 1000 : 100, // 1000 requests for tests, 100 for production
+  windowMs: process.env.NODE_ENV === 'test' ? 1 : 15 * 60 * 1000,
+  max: process.env.NODE_ENV === 'test' ? 1000 : 100,
   message: 'Demasiadas solicitudes desde esta IP, por favor intente más tarde',
   standardHeaders: true,
   legacyHeaders: false,
   trustProxy: true
 });
 
-// Configuración de rate limiter específico para autenticación
 const authLimiter = rateLimit({
-  windowMs: process.env.NODE_ENV === 'test' ? 1 : 60 * 60 * 1000, // 1ms for tests, 1 hour for production
-  max: process.env.NODE_ENV === 'test' ? 1000 : 5, // 1000 requests for tests, 5 for production
+  windowMs: process.env.NODE_ENV === 'test' ? 1 : 60 * 60 * 1000,
+  max: process.env.NODE_ENV === 'test' ? 1000 : 5,
   message: 'Demasiados intentos de inicio de sesión, por favor intente más tarde',
   standardHeaders: true,
   legacyHeaders: false,
   trustProxy: true
 });
 
-// Middleware de seguridad
 app.use(helmet({
   contentSecurityPolicy: {
     directives: {
@@ -56,37 +52,21 @@ app.use(helmet({
   },
 }));
 
-// Configuración CORS
 app.use(cors(corsOptions));
 
 app.use(express.json());
 
-// Servir archivos estáticos desde la carpeta public
-app.use(express.static(join(__dirname, 'public')));
-
-// Aplicar rate limiter general a todas las rutas
 app.use(limiter);
 
-// Rutas de la API
 app.use('/api/products', productRoutes);
 app.use('/api/auth', authLimiter, authRoutes);
 
-// Ruta de health check para Vercel
-app.get('/health', (req, res) => {
-  res.status(200).json({ status: 'ok' });
+
+
+app.use((req, res) => {
+  res.status(404).json({ error: 'Ruta no encontrada' });
 });
 
-// Ruta principal - servir el frontend
-app.get('/', (req, res) => {
-  res.sendFile(join(__dirname, 'public', 'index.html'));
-});
-
-// Ruta para cualquier otra ruta - servir el frontend (SPA)
-app.get('*', (req, res) => {
-  res.sendFile(join(__dirname, 'public', 'index.html'));
-});
-
-// Manejador de errores global mejorado
 app.use((err, req, res, next) => {
   console.error('Error:', err);
   const statusCode = err.statusCode || 500;
@@ -98,45 +78,86 @@ app.use((err, req, res, next) => {
   });
 });
 
-// Iniciar el servidor solo si no estamos en producción o en modo test
-if (process.env.NODE_ENV !== 'production' && process.env.NODE_ENV !== 'test') {
-  const server = app.listen(PORT, () => {
-    console.log(`Servidor escuchando en http://localhost:${PORT}`);
-  });
-
-  // Manejo de señales para cierre limpio
-  const gracefulShutdown = async () => {
-    console.log('Cerrando servidor...');
+const startServer = async (initialPort) => {
+  const findAvailablePort = async (startPort) => {
+    const net = await import('net');
     
-    // Cerrar el servidor HTTP
-    server.close(() => {
-      console.log('Servidor HTTP cerrado');
-      process.exit(0);
+    return new Promise((resolve, reject) => {
+      const server = net.createServer();
+      
+      server.listen(startPort, () => {
+        const { port } = server.address();
+        server.close(() => resolve(port));
+      });
+      
+      server.on('error', (err) => {
+        if (err.code === 'EADDRINUSE') {
+          resolve(findAvailablePort(startPort + 1));
+        } else {
+          reject(err);
+        }
+      });
     });
-
-    // Si después de 10 segundos no se cierra, forzar el cierre
-    setTimeout(() => {
-      console.error('No se pudo cerrar el servidor a tiempo, forzando cierre...');
-      process.exit(1);
-    }, 10000);
   };
 
-  // Manejar señales de terminación
-  process.on('SIGTERM', gracefulShutdown);
-  process.on('SIGINT', gracefulShutdown);
+  try {
+    const availablePort = await findAvailablePort(Number(initialPort));
+    const server = createServer(app);
+    
+    server.listen(availablePort, () => {
+      console.log(`🚀 Servidor iniciado exitosamente en http://localhost:${availablePort}`);
+    });
 
-  // Manejar errores no capturados
-  process.on('uncaughtException', (err) => {
-    console.error('Error no capturado:', err);
-    gracefulShutdown();
-  });
+    const gracefulShutdown = async (signal) => {
+      console.log(`\n🛑 Recibida señal ${signal}, cerrando servidor...`);
+      
+      server.close(() => {
+        console.log('✅ Servidor HTTP cerrado correctamente');
+        process.exit(0);
+      });
 
-  process.on('unhandledRejection', (err) => {
-    console.error('Promesa rechazada no manejada:', err);
-    gracefulShutdown();
+      setTimeout(() => {
+        console.error('⏰ No se pudo cerrar el servidor a tiempo, forzando cierre...');
+        process.exit(1);
+      }, 10000);
+    };
+
+    process.on('SIGTERM', () => gracefulShutdown('SIGTERM'));
+    process.on('SIGINT', () => gracefulShutdown('SIGINT'));
+    process.on('SIGUSR2', () => gracefulShutdown('SIGUSR2'));
+    process.on('uncaughtException', (err) => {
+      console.error('❌ Error no capturado:', err);
+      gracefulShutdown('uncaughtException');
+    });
+
+    process.on('unhandledRejection', (reason, promise) => {
+      console.error('❌ Promesa rechazada no manejada:', reason);
+      gracefulShutdown('unhandledRejection');
+    });
+
+    server.on('error', (err) => {
+      if (err.code === 'EADDRINUSE') {
+        console.error(`❌ Puerto ${availablePort} está en uso`);
+        process.exit(1);
+      } else {
+        console.error('❌ Error del servidor:', err);
+        gracefulShutdown('server_error');
+      }
+    });
+
+    return server;
+  } catch (error) {
+    console.error('❌ Error al iniciar el servidor:', error);
+    process.exit(1);
+  }
+};
+
+if (process.env.NODE_ENV !== 'test') {
+  startServer(PORT).catch((error) => {
+    console.error('❌ Error fatal al iniciar el servidor:', error);
+    process.exit(1);
   });
 }
 
-// Exportar la app para Vercel y testing
 export { app };
 export default app;

@@ -3,8 +3,7 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
-// Verificar si ya existe una instancia de Firebase
-if (!admin.apps.length) {
+if (!admin.apps || !admin.apps.length) {
   try {
     admin.initializeApp({
       credential: admin.credential.cert({

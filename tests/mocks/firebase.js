@@ -1,7 +1,5 @@
-// ESM-compatible Firebase mock for Jest, using only plain functions
 import { jest } from '@jest/globals';
 
-// Create mock functions
 const mockCollection = jest.fn();
 const mockDoc = jest.fn();
 const mockWhere = jest.fn();
@@ -10,7 +8,6 @@ const mockAdd = jest.fn();
 const mockUpdate = jest.fn();
 const mockDelete = jest.fn();
 
-// Create the mock Firestore instance
 export const mockFirestore = {
   collection: mockCollection,
   doc: mockDoc,
@@ -21,27 +18,24 @@ export const mockFirestore = {
   delete: mockDelete
 };
 
-// Set up the chainable behavior
 mockCollection.mockReturnValue(mockFirestore);
 mockDoc.mockReturnValue(mockFirestore);
 mockWhere.mockReturnValue(mockFirestore);
 
-// Mock Firebase Admin
 const mockFirebaseAdmin = {
   initializeApp: jest.fn(),
   credential: {
     cert: jest.fn()
   },
-  firestore: jest.fn(() => mockFirestore)
+  firestore: jest.fn(() => mockFirestore),
+  apps: []
 };
 
-// Mock the entire firebase-admin module
 jest.unstable_mockModule('firebase-admin', () => ({
   __esModule: true,
   default: mockFirebaseAdmin
 }));
 
-// Export the mock for direct use
 export { mockFirebaseAdmin as default };
 
 export function getMockFirestore() {

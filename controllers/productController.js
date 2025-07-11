@@ -22,27 +22,24 @@ export const verifyToken = (req, res, next) => {
   }
 };
 
-// Función para cargar datos mock
 async function loadMockData() {
   try {
     const mockDataPath = join(__dirname, '..', 'data', 'mockProducts.json');
     const mockData = await readFile(mockDataPath, 'utf-8');
-    return JSON.parse(mockData);
+    const parsedData = JSON.parse(mockData);
+    return parsedData.products || [];
   } catch (error) {
-    console.error('Error loading mock data:', error);
     return [];
   }
 }
 
 export const getProducts = async (req, res) => {
   try {
-    // En desarrollo, usar datos mock
     if (process.env.NODE_ENV === 'development') {
       const mockProducts = await loadMockData();
       return res.json(mockProducts);
     }
 
-    // En producción, usar Firebase
     const productsSnapshot = await db.collection('products').get();
     
     if (productsSnapshot.empty) {
@@ -62,8 +59,6 @@ export const getProducts = async (req, res) => {
       products
     });
   } catch (error) {
-    console.error('Error getting products:', error);
-    // En caso de error en producción, intentar usar datos mock como fallback
     try {
       const mockProducts = await loadMockData();
       return res.json({
@@ -83,7 +78,6 @@ export const getProductById = async (req, res) => {
   try {
     const { id } = req.params;
 
-    // En desarrollo, usar datos mock
     if (process.env.NODE_ENV === 'development') {
       const mockProducts = await loadMockData();
       const product = mockProducts.find(p => p.id === id);
@@ -99,7 +93,6 @@ export const getProductById = async (req, res) => {
       });
     }
 
-    // En producción, usar Firebase
     const productDoc = await db.collection('products').doc(id).get();
     
     if (!productDoc.exists) {
@@ -117,7 +110,6 @@ export const getProductById = async (req, res) => {
       }
     });
   } catch (error) {
-    console.error('Error getting product:', error);
     res.status(500).json({ 
       error: 'Error al obtener el producto',
       message: 'Ocurrió un error al intentar obtener el producto'
@@ -129,7 +121,6 @@ export const createProduct = async (req, res) => {
   try {
     const { name, description, price, stock } = req.body;
 
-    // Validar campos requeridos
     if (!name || !description || !price || !stock) {
       return res.status(400).json({ 
         error: 'Campos requeridos faltantes',
@@ -137,7 +128,6 @@ export const createProduct = async (req, res) => {
       });
     }
 
-    // En desarrollo, simular creación
     if (process.env.NODE_ENV === 'development') {
       const mockProducts = await loadMockData();
       const newProduct = {
@@ -154,7 +144,6 @@ export const createProduct = async (req, res) => {
       });
     }
 
-    // En producción, usar Firebase
     const productRef = await db.collection('products').add({
       name,
       description,
@@ -175,7 +164,6 @@ export const createProduct = async (req, res) => {
       }
     });
   } catch (error) {
-    console.error('Error creating product:', error);
     res.status(500).json({ 
       error: 'Error al crear el producto',
       message: 'Ocurrió un error al intentar crear el producto'
@@ -188,7 +176,6 @@ export const updateProduct = async (req, res) => {
     const { id } = req.params;
     const { name, description, price, stock } = req.body;
 
-    // Validar campos requeridos
     if (!name || !description || !price || !stock) {
       return res.status(400).json({ 
         error: 'Campos requeridos faltantes',
@@ -196,33 +183,35 @@ export const updateProduct = async (req, res) => {
       });
     }
 
-    // En desarrollo, simular actualización
     if (process.env.NODE_ENV === 'development') {
       const mockProducts = await loadMockData();
       const productIndex = mockProducts.findIndex(p => p.id === id);
+      
       if (productIndex === -1) {
         return res.status(404).json({ 
           error: 'Producto no encontrado',
           message: `No existe un producto con el ID: ${id}`
         });
       }
+
       const updatedProduct = {
         ...mockProducts[productIndex],
         name,
         description,
         price: Number(price),
-        stock: Number(stock)
+        stock: Number(stock),
+        updatedAt: new Date().toISOString()
       };
-      return res.json({
+
+      return res.status(200).json({
         message: 'Producto actualizado correctamente',
         product: updatedProduct
       });
     }
 
-    // En producción, usar Firebase
     const productRef = db.collection('products').doc(id);
     const productDoc = await productRef.get();
-
+    
     if (!productDoc.exists) {
       return res.status(404).json({ 
         error: 'Producto no encontrado',
@@ -234,21 +223,19 @@ export const updateProduct = async (req, res) => {
       name,
       description,
       price: Number(price),
-      stock: Number(stock)
+      stock: Number(stock),
+      updatedAt: new Date()
     });
 
-    res.json({
+    const updatedDoc = await productRef.get();
+    res.status(200).json({
       message: 'Producto actualizado correctamente',
       product: {
-        id,
-        name,
-        description,
-        price: Number(price),
-        stock: Number(stock)
+        id: updatedDoc.id,
+        ...updatedDoc.data()
       }
     });
   } catch (error) {
-    console.error('Error updating product:', error);
     res.status(500).json({ 
       error: 'Error al actualizar el producto',
       message: 'Ocurrió un error al intentar actualizar el producto'
@@ -260,26 +247,25 @@ export const deleteProduct = async (req, res) => {
   try {
     const { id } = req.params;
 
-    // En desarrollo, simular eliminación
     if (process.env.NODE_ENV === 'development') {
       const mockProducts = await loadMockData();
       const productIndex = mockProducts.findIndex(p => p.id === id);
+      
       if (productIndex === -1) {
         return res.status(404).json({ 
           error: 'Producto no encontrado',
           message: `No existe un producto con el ID: ${id}`
         });
       }
-      return res.json({ 
-        message: 'Producto eliminado correctamente',
-        id
+
+      return res.status(200).json({
+        message: 'Producto eliminado correctamente'
       });
     }
 
-    // En producción, usar Firebase
     const productRef = db.collection('products').doc(id);
     const productDoc = await productRef.get();
-
+    
     if (!productDoc.exists) {
       return res.status(404).json({ 
         error: 'Producto no encontrado',
@@ -288,15 +274,109 @@ export const deleteProduct = async (req, res) => {
     }
 
     await productRef.delete();
-    res.json({ 
-      message: 'Producto eliminado correctamente',
-      id
+
+    res.status(200).json({
+      message: 'Producto eliminado correctamente'
     });
   } catch (error) {
-    console.error('Error deleting product:', error);
     res.status(500).json({ 
       error: 'Error al eliminar el producto',
       message: 'Ocurrió un error al intentar eliminar el producto'
+    });
+  }
+};
+
+export const patchProduct = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const updateData = req.body;
+
+    // Validar que al menos un campo sea proporcionado
+    if (!updateData || Object.keys(updateData).length === 0) {
+      return res.status(400).json({ 
+        error: 'Datos de actualización requeridos',
+        message: 'Debe proporcionar al menos un campo para actualizar'
+      });
+    }
+
+    // Validar campos permitidos
+    const allowedFields = ['name', 'description', 'price', 'stock'];
+    const invalidFields = Object.keys(updateData).filter(field => !allowedFields.includes(field));
+    
+    if (invalidFields.length > 0) {
+      return res.status(400).json({ 
+        error: 'Campos no permitidos',
+        message: `Los siguientes campos no están permitidos: ${invalidFields.join(', ')}`
+      });
+    }
+
+    if (process.env.NODE_ENV === 'development') {
+      const mockProducts = await loadMockData();
+      const productIndex = mockProducts.findIndex(p => p.id === id);
+      
+      if (productIndex === -1) {
+        return res.status(404).json({ 
+          error: 'Producto no encontrado',
+          message: `No existe un producto con el ID: ${id}`
+        });
+      }
+
+      // Actualizar solo los campos proporcionados
+      const updatedProduct = {
+        ...mockProducts[productIndex],
+        ...updateData,
+        updatedAt: new Date().toISOString()
+      };
+
+      // Convertir price y stock a números si están presentes
+      if (updateData.price !== undefined) {
+        updatedProduct.price = Number(updateData.price);
+      }
+      if (updateData.stock !== undefined) {
+        updatedProduct.stock = Number(updateData.stock);
+      }
+
+      return res.status(200).json({
+        message: 'Producto actualizado parcialmente correctamente',
+        product: updatedProduct
+      });
+    }
+
+    const productRef = db.collection('products').doc(id);
+    const productDoc = await productRef.get();
+    
+    if (!productDoc.exists) {
+      return res.status(404).json({ 
+        error: 'Producto no encontrado',
+        message: `No existe un producto con el ID: ${id}`
+      });
+    }
+
+    // Preparar datos de actualización
+    const updateFields = { ...updateData, updatedAt: new Date() };
+    
+    // Convertir price y stock a números si están presentes
+    if (updateFields.price !== undefined) {
+      updateFields.price = Number(updateFields.price);
+    }
+    if (updateFields.stock !== undefined) {
+      updateFields.stock = Number(updateFields.stock);
+    }
+
+    await productRef.update(updateFields);
+
+    const updatedDoc = await productRef.get();
+    res.status(200).json({
+      message: 'Producto actualizado parcialmente correctamente',
+      product: {
+        id: updatedDoc.id,
+        ...updatedDoc.data()
+      }
+    });
+  } catch (error) {
+    res.status(500).json({ 
+      error: 'Error al actualizar el producto',
+      message: 'Ocurrió un error al intentar actualizar el producto'
     });
   }
 }; 

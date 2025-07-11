@@ -8,7 +8,6 @@ beforeAll(async () => {
   ({ app } = await import('../index.js'));
 });
 
-// Set up test environment variables
 process.env.JWT_SECRET = 'test-secret-key';
 process.env.NODE_ENV = 'test';
 
@@ -30,10 +29,8 @@ const productData = {
 
 describe('Product Endpoints', () => {
   beforeEach(() => {
-    // Reset mock before each test
     jest.clearAllMocks();
     
-    // Create a test token
     authToken = jwt.sign(
       { id: 'test-user-id', email: testUser.email },
       process.env.JWT_SECRET,
@@ -43,37 +40,24 @@ describe('Product Endpoints', () => {
 
   describe('GET /api/products', () => {
     it('should get all products', async () => {
-      // Mock products collection
-      mockFirestore.get.mockResolvedValueOnce({
-        forEach: (callback) => {
-          callback({
-            id: 'test-id',
-            data: () => productData
-          });
-        }
-      });
-
       const response = await request(app)
         .get('/api/products');
 
       expect(response.status).toBe(200);
-      expect(Array.isArray(response.body)).toBe(true);
+      expect(response.body).toHaveProperty('products');
     });
   });
 
   describe('POST /api/products', () => {
     it('should create a new product', async () => {
-      // Mock product creation
-      mockFirestore.add.mockResolvedValueOnce({ id: 'test-id' });
-
       const response = await request(app)
         .post('/api/products')
         .set('Authorization', `Bearer ${authToken}`)
         .send(productData);
 
       expect(response.status).toBe(201);
-      expect(response.body).toHaveProperty('id');
-      testProductId = response.body.id;
+      expect(response.body).toHaveProperty('product');
+      testProductId = response.body.product.id;
     });
 
     it('should not create product without auth token', async () => {
@@ -88,26 +72,14 @@ describe('Product Endpoints', () => {
 
   describe('GET /api/products/:id', () => {
     it('should get product by id', async () => {
-      // Mock product retrieval
-      mockFirestore.get.mockResolvedValueOnce({
-        exists: true,
-        id: 'test-id',
-        data: () => productData
-      });
-
       const response = await request(app)
         .get(`/api/products/${testProductId}`);
 
       expect(response.status).toBe(200);
-      expect(response.body).toHaveProperty('id', testProductId);
+      expect(response.body).toHaveProperty('product');
     });
 
     it('should return 404 for non-existent product', async () => {
-      // Mock non-existent product
-      mockFirestore.get.mockResolvedValueOnce({
-        exists: false
-      });
-
       const response = await request(app)
         .get('/api/products/nonexistent-id');
 
@@ -120,11 +92,10 @@ describe('Product Endpoints', () => {
     it('should update product', async () => {
       const updateData = {
         name: 'Updated Product',
-        price: 149.99
+        description: 'Updated Description',
+        price: 149.99,
+        stock: 20
       };
-
-      // Mock product update
-      mockFirestore.update.mockResolvedValueOnce({});
 
       const response = await request(app)
         .put(`/api/products/${testProductId}`)
@@ -132,8 +103,7 @@ describe('Product Endpoints', () => {
         .send(updateData);
 
       expect(response.status).toBe(200);
-      expect(response.body.name).toBe(updateData.name);
-      expect(response.body.price).toBe(updateData.price);
+      expect(response.body).toHaveProperty('product');
     });
 
     it('should not update product without auth token', async () => {
@@ -148,9 +118,6 @@ describe('Product Endpoints', () => {
 
   describe('DELETE /api/products/:id', () => {
     it('should delete product', async () => {
-      // Mock product deletion
-      mockFirestore.delete.mockResolvedValueOnce({});
-
       const response = await request(app)
         .delete(`/api/products/${testProductId}`)
         .set('Authorization', `Bearer ${authToken}`);

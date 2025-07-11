@@ -1,288 +1,369 @@
-# Entrega Final - Talento Tech Node.js
+# 🛍️ E-Commerce API - Node.js RESTful API
 
-## Descripción General
+## 📋 Descripción del Proyecto
 
-Este proyecto es la **entrega final** para el curso de Node.js de Talento Tech. El objetivo es diseñar, desarrollar y desplegar una API RESTful funcional que permita gestionar los productos de una tienda en línea (E-Commerce). El sistema permite a usuarios autorizados realizar operaciones CRUD (Crear, Leer, Actualizar, Eliminar) sobre los productos, almacenando los datos tanto localmente (en archivos JSON) como en la nube (Firebase/Firestore).
+Este proyecto es una **API RESTful completa** desarrollada en Node.js para la gestión de productos de una tienda en línea (E-Commerce). La aplicación permite realizar operaciones CRUD completas sobre productos, con autenticación JWT y soporte para múltiples bases de datos.
 
-## 🎨 Frontend Integrado
+### 🎯 Objetivos del Proyecto
 
-El proyecto incluye un **frontend moderno y responsivo** que permite interactuar con la API de manera visual e intuitiva.
+- ✅ **API RESTful funcional** con endpoints para gestión de productos
+- ✅ **Sistema de autenticación** con JWT para usuarios autorizados
+- ✅ **Persistencia de datos** en archivos JSON y Firebase/Firestore
+- ✅ **Frontend integrado** con interfaz moderna y responsiva
+- ✅ **Despliegue en producción** con Vercel
+- ✅ **Manejo de errores** y validaciones robustas
 
-### Características del Frontend
+## 🛠️ Tecnologías Utilizadas
 
-- **Interfaz Moderna**: Diseño responsivo con gradientes y animaciones suaves
-- **Gestión Completa**: CRUD completo de productos con formularios intuitivos
-- **Indicadores Visuales**: Badges de stock, notificaciones y estados de carga
-- **Experiencia de Usuario**: Modal de confirmación, validación en tiempo real
-- **Responsive Design**: Optimizado para desktop, tablet y móvil
+### 🎯 Backend
+- **Node.js** - Runtime de JavaScript
+- **Express.js** - Framework web para Node.js
+- **ES6 Modules** - Sistema de módulos moderno
 
-### Acceso al Frontend
+### 🔐 Autenticación y Seguridad
+- **JWT (JSON Web Tokens)** - Autenticación de usuarios
+- **bcryptjs** - Encriptación de contraseñas
+- **express-rate-limit** - Rate limiting para prevenir ataques
+- **Helmet** - Headers de seguridad
+- **CORS** - Configuración cross-origin
 
-Una vez que el servidor esté ejecutándose, puedes acceder al frontend en:
+### 🗄️ Base de Datos
+- **Firebase/Firestore** - Base de datos en la nube
+- **JSON Files** - Datos locales para desarrollo
+- **firebase-admin** - SDK de Firebase para Node.js
+
+### 🚀 Despliegue
+- **Vercel** - Plataforma de despliegue
+- **dotenv** - Gestión de variables de entorno
+
+### 🛠️ Desarrollo
+- **nodemon** - Reinicio automático en desarrollo
+
+## 🚀 Características Principales
+
+### 🔐 Autenticación y Seguridad
+- **JWT (JSON Web Tokens)** para autenticación de usuarios
+- **Rate limiting** para prevenir ataques de fuerza bruta
+- **CORS configurado** para peticiones cross-origin
+- **Helmet** para headers de seguridad
+- **Validación de datos** en todos los endpoints
+
+### 📦 Gestión de Productos
+- **CRUD completo**: Crear, Leer, Actualizar, Eliminar productos
+- **Validación de campos** obligatorios
+- **Búsqueda por ID** de productos específicos
+- **Gestión de stock** con indicadores visuales
+
+### 🗄️ Base de Datos
+- **Datos locales**: Archivos JSON para desarrollo
+- **Firebase/Firestore**: Base de datos en la nube para producción
+- **Fallback automático**: Si Firebase falla, usa datos locales
+- **Migración transparente** entre entornos
+
+### 🎨 Frontend Integrado
+- **Interfaz moderna** con gradientes y animaciones
+- **Diseño responsivo** para desktop, tablet y móvil
+- **Gestión visual** de productos con formularios intuitivos
+- **Notificaciones** y feedback visual para todas las operaciones
+
+## 📁 Estructura del Proyecto
+
 ```
-http://localhost:3000
+Entrega-Final-FIL/
+├── 📁 config/                 # Configuraciones (CORS, Firebase)
+├── 📁 controllers/            # Lógica de negocio
+│   ├── authController.js      # Autenticación (login/register)
+│   └── productController.js   # Gestión de productos
+├── 📁 data/                  # Datos mock (JSON)
+│   ├── mockProducts.json     # Productos de ejemplo
+│   └── mockUsers.json        # Usuarios de ejemplo
+├── 📁 middleware/            # Middleware personalizado
+│   └── auth.js              # Verificación de JWT
+├── 📁 models/               # Modelos de datos
+│   ├── productModel.js      # Modelo de productos
+│   └── userModel.js         # Modelo de usuarios
+├── 📁 public/               # Frontend de la aplicación
+├── 📁 routes/               # Definición de rutas
+│   ├── authRoutes.js        # Rutas de autenticación
+│   └── productRoutes.js     # Rutas de productos
+├── 📁 services/             # Servicios (Firestore)
+├── 📁 tests/                # Pruebas unitarias
+├── 📄 index.js              # Punto de entrada del servidor
+├── 📄 package.json          # Dependencias y scripts
+└── 📄 README.md             # Esta documentación
 ```
 
-### Funcionalidades del Frontend
+## 🛠️ Instalación y Configuración
 
-1. **Ver Productos**: Lista todos los productos con información detallada
-2. **Crear Productos**: Formulario para agregar nuevos productos
-3. **Editar Productos**: Modificar información existente
-4. **Eliminar Productos**: Eliminar con confirmación
-5. **Indicadores de Stock**: Visualización del estado del inventario
-6. **Notificaciones**: Feedback visual para todas las operaciones
+### Prerrequisitos
+- **Node.js** (versión 16 o superior)
+- **npm** o **yarn**
+- **Cuenta de Firebase** (para producción)
 
-Para más detalles sobre el frontend, consulta la documentación en `public/README.md`.
-
-## Estructura del Proyecto
-
-- `/controllers`: Contiene la lógica de negocio (controladores de productos, autenticación, etc).
-- `/routes`: Define las rutas de acceso a la API.
-- `/models`: Define la estructura de los datos y el acceso a ellos.
-- `/services`: Gestiona el acceso a datos y la interacción con la base de datos (opcional).
-- `/data`: Archivos JSON que simulan la base de datos local.
-- `/public`: Frontend de la aplicación (HTML, CSS, JavaScript).
-- `index.js`: Punto de entrada del servidor Express.
-
-## Funcionalidades
-
-- **Gestión de productos:** Crear, listar, actualizar y eliminar productos (CRUD).
-- **Autenticación JWT:** Registro y login de usuarios, protección de rutas.
-- **Persistencia:** Datos almacenados en archivos JSON y migración a Firestore.
-- **CORS y manejo de errores global.**
-
-## Requerimientos Específicos
-
-1. **Estructura del Proyecto:**
-   - Carpetas principales: `/controllers`, `/models`, `/routes`, `/services`, `/public` (opcional).
-2. **Funcionalidades:**
-   - Gestión de productos (CRUD).
-   - Manejo de errores y respuestas adecuadas.
-   - Configuración CORS.
-3. **Seguridad:**
-   - Autenticación y autorización mediante JWT.
-4. **Base de Datos:**
-   - Acceso inicial a datos mediante archivos JSON.
-   - Migración a Firebase/Firestore.
-5. **Despliegue:**
-   - Subir la API a un servicio de producción (Vercel, Railway, etc.).
-
-## Funcionalidades principales
-
-- La API responde correctamente a los métodos HTTP (GET, POST, PUT, PATCH, DELETE).
-- Devuelve productos o el producto seleccionado.
-- Las rutas son claras y tienen una responsabilidad única.
-- Manejo de errores comunes (404, 500) con mensajes claros.
-- Almacenamiento y recuperación correcta de datos en JSON y Firestore.
-- Uso de la herramienta solo para usuarios autorizados y autenticados.
-
-## Uso
-
-1. Instala dependencias:
-   ```bash
-   npm install
-   ```
-2. Inicia el servidor:
-   ```bash
-   # Modo producción
-   npm start
-   # o
-   node index.js
-
-   # Modo desarrollo (con reinicio automático)
-   npm run dev
-   ```
-
-## Guía de Pruebas con Postman
-
-### Configuración Inicial
-
-1. **Crear una colección:**
-   - Abre Postman
-   - Crea una nueva colección llamada "API Productos"
-   - Crea dos carpetas: "Auth" y "Products"
-
-2. **Configurar variables de entorno:**
-   - Crea un nuevo entorno (Environment)
-   - Agrega las siguientes variables:
-     - `baseUrl`: `http://localhost:3000/api`
-     - `token`: (déjalo vacío por ahora)
-
-### Endpoints Disponibles
-
-#### 1. Autenticación (No requiere token)
-
-##### Registro de Usuario
+### 1. Clonar el Repositorio
+```bash
+git clone <url-del-repositorio>
+cd Entrega-Final-FIL
 ```
-POST {{baseUrl}}/auth/register
-Content-Type: application/json
 
-{
+### 2. Instalar Dependencias
+```bash
+npm install
+```
+
+### 3. Configurar Variables de Entorno
+
+#### Para Desarrollo Local
+Crea un archivo `.env` en la raíz del proyecto:
+
+```env
+# Configuración del servidor
+PORT=3000
+
+# JWT Secret
+JWT_SECRET=tu-secreto-jwt-super-seguro
+
+# Firebase (opcional para desarrollo)
+FIREBASE_PROJECT_ID=tu-proyecto-firebase
+FIREBASE_CLIENT_EMAIL=tu-email@proyecto.iam.gserviceaccount.com
+FIREBASE_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\n...\n-----END PRIVATE KEY-----\n"
+```
+
+#### Sobre NODE_ENV y nodemon
+- Cuando usas `npm run dev` (o ejecutas nodemon), el valor de `NODE_ENV` se toma automáticamente del archivo `nodemon.json`.
+  - Si en `nodemon.json` tienes:
+    - `"NODE_ENV": "development"` → Usarás datos mock (JSON local)
+    - `"NODE_ENV": "production"` → Usarás Firestore real
+- **Solo necesitas definir `NODE_ENV` en `.env` si ejecutas la app con `node index.js` o `npm start` directamente.**
+
+Ejemplo de `.env` para producción:
+```env
+PORT=3000
+NODE_ENV=production
+JWT_SECRET=tu-secreto
+FIREBASE_PROJECT_ID=...
+FIREBASE_CLIENT_EMAIL=...
+FIREBASE_PRIVATE_KEY=...
+```
+
+### 4. Ejecutar la Aplicación
+
+#### Modo Desarrollo (con reinicio automático)
+```bash
+npm run dev
+```
+
+#### Modo Producción
+```bash
+npm start
+```
+
+#### Ejecutar directamente
+```bash
+node index.js
+```
+
+## 🌐 Acceso a la Aplicación
+
+Una vez que el servidor esté ejecutándose:
+
+- **Frontend**: http://localhost:3000
+- **API Base URL**: http://localhost:3000/api
+
+## 📡 Endpoints de la API
+
+### 🔐 Autenticación (`/api/auth`)
+
+| Método | Endpoint | Descripción | Autenticación |
+|--------|----------|-------------|---------------|
+| `POST` | `/api/auth/register` | Registrar nuevo usuario | ❌ No requiere |
+| `POST` | `/api/auth/login` | Iniciar sesión | ❌ No requiere |
+
+### 📦 Productos (`/api/products`)
+
+| Método | Endpoint | Descripción | Autenticación |
+|--------|----------|-------------|---------------|
+| `GET` | `/api/products` | Obtener todos los productos | ❌ No requiere |
+| `GET` | `/api/products/:id` | Obtener producto por ID | ❌ No requiere |
+| `POST` | `/api/products` | Crear nuevo producto | ✅ Requiere JWT |
+| `PUT` | `/api/products/:id` | Actualizar producto completo | ✅ Requiere JWT |
+| `PATCH` | `/api/products/:id` | Actualizar producto parcialmente | ✅ Requiere JWT |
+| `DELETE` | `/api/products/:id` | Eliminar producto | ✅ Requiere JWT |
+
+
+
+## 🔧 Ejemplos de Uso
+
+### 1. Registro de Usuario
+```bash
+curl -X POST http://localhost:3000/api/auth/register \
+  -H "Content-Type: application/json" \
+  -d '{
     "email": "usuario@ejemplo.com",
     "password": "123456",
     "name": "Usuario Ejemplo"
-}
+  }'
 ```
 
-##### Inicio de Sesión
-```
-POST {{baseUrl}}/auth/login
-Content-Type: application/json
-
-{
+### 2. Inicio de Sesión
+```bash
+curl -X POST http://localhost:3000/api/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{
     "email": "usuario@ejemplo.com",
     "password": "123456"
-}
-```
-- Guarda el token recibido en la respuesta para usarlo en las siguientes peticiones.
-
-#### 2. Products (Requiere token)
-
-##### Obtener todos los productos
-```
-GET {{baseUrl}}/products
+  }'
 ```
 
-##### Obtener un producto por ID
-```
-GET {{baseUrl}}/products/:id
-```
-
-##### Crear un producto
-```
-POST {{baseUrl}}/products
-Authorization: Bearer {{token}}
-Content-Type: application/json
-
-{
+### 3. Crear Producto (Requiere Token)
+```bash
+curl -X POST http://localhost:3000/api/products \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer TU_TOKEN_JWT" \
+  -d '{
     "name": "Producto Ejemplo",
     "description": "Descripción del producto",
     "price": 99.99,
     "stock": 100
-}
+  }'
 ```
 
-##### Actualizar un producto
+### 4. Obtener Todos los Productos
+```bash
+curl -X GET http://localhost:3000/api/products
 ```
-PUT {{baseUrl}}/products/:id
-Authorization: Bearer {{token}}
-Content-Type: application/json
 
-{
-    "name": "Producto Actualizado",
-    "description": "Nueva descripción",
-    "price": 149.99,
+### 5. Actualizar Producto Parcialmente (Requiere Token)
+```bash
+curl -X PATCH http://localhost:3000/api/products/1 \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer TU_TOKEN_JWT" \
+  -d '{
+    "price": 89.99,
     "stock": 50
-}
+  }'
 ```
 
-##### Eliminar un producto
+### 6. Actualizar Producto Completo (Requiere Token)
+```bash
+curl -X PUT http://localhost:3000/api/products/1 \
+  -H "Content-Type: application/json" \
+  -H "Authorization: Bearer TU_TOKEN_JWT" \
+  -d '{
+    "name": "Producto Actualizado",
+    "description": "Nueva descripción del producto",
+    "price": 149.99,
+    "stock": 75
+  }'
 ```
-DELETE {{baseUrl}}/products/:id
-Authorization: Bearer {{token}}
+
+### 7. Eliminar Producto (Requiere Token)
+```bash
+curl -X DELETE http://localhost:3000/api/products/1 \
+  -H "Authorization: Bearer TU_TOKEN_JWT"
 ```
 
-### Flujo de Prueba Recomendado
+## 🧪 Pruebas con Postman
 
-1. **Registro de Usuario:**
-   - Ejecuta la petición de registro
-   - Verifica que recibas un token en la respuesta
+### Configuración Inicial
 
-2. **Inicio de Sesión:**
-   - Ejecuta la petición de login
-   - Copia el token recibido
-   - Configura el token en la variable de entorno `token`
+1. **Crear Colección**: "E-Commerce API"
+2. **Configurar Variables de Entorno**:
+   - `baseUrl`: `http://localhost:3000/api`
+   - `token`: (vacío inicialmente)
 
-3. **Operaciones CRUD:**
-   - Prueba crear un nuevo producto
-   - Lista todos los productos
-   - Obtén un producto específico por ID
-   - Actualiza el producto creado
-   - Elimina el producto
+### Flujo de Pruebas
 
-### Headers Comunes
+1. **Registro/Login** → Obtener token JWT
+2. **Configurar token** en encabezado de Postman
+3. **Probar CRUD** de productos con token
 
-- Para todas las peticiones:
-  ```
-  Content-Type: application/json
-  ```
+## 🔒 Seguridad
 
-- Para peticiones autenticadas:
-  ```
-  Authorization: Bearer {{token}}
-  ```
+### Rate Limiting
+- **Endpoints generales**: 100 requests por 15 minutos
+- **Endpoints de auth**: 5 intentos por hora
 
-### Respuestas Esperadas
+### Headers de Seguridad
+- **Helmet** configurado para prevenir ataques comunes
+- **CORS** configurado para orígenes permitidos
+- **Content Security Policy** habilitado
 
-- **Registro/Login Exitoso:**
-  ```json
-  {
-    "message": "Usuario registrado correctamente",
-    "token": "jwt-token-here",
-    "user": {
-      "id": "user-id",
-      "email": "usuario@ejemplo.com",
-      "name": "Usuario Ejemplo"
-    }
-  }
-  ```
+### Validaciones
+- **Campos requeridos** en todos los endpoints
+- **Formato de email** validado
+- **Longitud de contraseña** mínima (6 caracteres)
+- **Tipos de datos** validados
 
-- **Producto Creado:**
-  ```json
-  {
-    "message": "Producto creado correctamente",
-    "product": {
-      "id": "product-id",
-      "name": "Producto Ejemplo",
-      "description": "Descripción del producto",
-      "price": 99.99,
-      "stock": 100,
-      "createdAt": "2024-03-14T12:00:00.000Z"
-    }
-  }
-  ```
+## 🚀 Despliegue
 
-### Solución de Problemas
+### Vercel (Recomendado)
 
-1. **Error 401 (Unauthorized):**
-   - Verifica que el token esté correctamente configurado
-   - Asegúrate de incluir el prefijo "Bearer" antes del token
+1. **Conectar repositorio** a Vercel
+2. **Configurar variables de entorno** en el dashboard
+3. **Desplegar automáticamente** en cada push
 
-2. **Error 400 (Bad Request):**
-   - Verifica que todos los campos requeridos estén presentes
-   - Asegúrate de que los tipos de datos sean correctos
+### Variables de Entorno para Producción
+```env
+JWT_SECRET=secreto-super-seguro-produccion
+FIREBASE_PROJECT_ID=tu-proyecto-firebase
+FIREBASE_CLIENT_EMAIL=tu-email@proyecto.iam.gserviceaccount.com
+FIREBASE_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\n...\n-----END PRIVATE KEY-----\n"
+```
 
-3. **Error 404 (Not Found):**
-   - Verifica que la URL sea correcta
-   - Asegúrate de que el ID del producto exista
+## 🐛 Solución de Problemas
 
-## Agradecimientos
+### Error 404 - Ruta no encontrada
+- Verificar que el servidor esté ejecutándose
+- Comprobar la URL del endpoint
+- Revisar que el puerto sea correcto
 
-Gracias a Talento Tech y a los instructores por el acompañamiento y los conocimientos brindados durante el curso.
+### Error 401 - No autorizado
+- Verificar que el token JWT sea válido
+- Comprobar el formato: `Bearer TOKEN`
+- Asegurar que el token no haya expirado
 
-## Configuración de Firebase
+### Error 400 - Bad Request
+- Verificar que todos los campos requeridos estén presentes
+- Comprobar el formato de los datos enviados
+- Validar tipos de datos (string, number, etc.)
 
-1. Crea un proyecto en [Firebase Console](https://console.firebase.google.com/)
-2. Ve a Configuración del Proyecto > Cuentas de servicio
-3. Genera una nueva clave privada
-4. Copia los valores de las credenciales para configurar las variables de entorno
+### Error 500 - Error interno
+- Revisar logs del servidor
+- Verificar configuración de Firebase
+- Comprobar variables de entorno
 
-**Nota:** Las credenciales de Firebase son sensibles y deben manejarse a través de variables de entorno. No subas las credenciales directamente al repositorio.
+## 📊 Estado del Proyecto
 
-## Configuración de Variables de Entorno
+- ✅ **API RESTful** - Completamente funcional
+- ✅ **Autenticación JWT** - Implementada y probada
+- ✅ **CRUD de productos** - Todas las operaciones funcionando
+- ✅ **Frontend integrado** - Interfaz moderna y responsiva
+- ✅ **Base de datos** - JSON local + Firebase/Firestore
+- ✅ **Despliegue** - Configurado para Vercel
+- ✅ **Documentación** - Completa y actualizada
 
-### Desarrollo Local
-1. Crea un archivo `.env` en la raíz del proyecto
-2. Copia el contenido de `.env.example` y rellena los valores con tus credenciales
+## 🤝 Contribución
 
-### Despliegue en Vercel
-1. Ve a la sección "Settings" de tu proyecto
-2. Navega a "Environment Variables"
-3. Agrega cada variable de entorno con sus respectivos valores
-4. Para la `FIREBASE_PRIVATE_KEY`, asegúrate de escapar los saltos de línea con `\n`
+1. **Fork** el repositorio
+2. **Crea una rama** para tu feature (`git checkout -b feature/nueva-funcionalidad`)
+3. **Commit** tus cambios (`git commit -am 'Agregar nueva funcionalidad'`)
+4. **Push** a la rama (`git push origin feature/nueva-funcionalidad`)
+5. **Crea un Pull Request**
 
-**Nota:** Nunca subas el archivo `.env` al repositorio. Está incluido en `.gitignore` por seguridad.
+## 📝 Licencia
+
+Este proyecto es parte del curso de Node.js de Talento Tech.
+
+## 👨‍💻 Autor
+
+**Francisco Lucena**
+- 📧 Email: [franciscolucena90@gmail.com]
+- 🔗 LinkedIn: [https://www.linkedin.com/in/franciscoivanlucena/]
+- 🐙 GitHub: [https://github.com/FLucena]
 
 ---
 
-**Autor:** Francisco Lucena
+## 🙏 Agradecimientos
+
+Gracias a **Talento Tech** y a todos los instructores por el acompañamiento y los conocimientos brindados durante el curso de Node.js.
