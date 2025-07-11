@@ -9,7 +9,6 @@ Este proyecto es una **API RESTful completa** desarrollada en Node.js para la ge
 - ✅ **API RESTful funcional** con endpoints para gestión de productos
 - ✅ **Sistema de autenticación** con JWT para usuarios autorizados
 - ✅ **Persistencia de datos** en archivos JSON y Firebase/Firestore
-- ✅ **Frontend integrado** con interfaz moderna y responsiva
 - ✅ **Despliegue en producción** con Vercel
 - ✅ **Manejo de errores** y validaciones robustas
 
@@ -60,12 +59,6 @@ Este proyecto es una **API RESTful completa** desarrollada en Node.js para la ge
 - **Fallback automático**: Si Firebase falla, usa datos locales
 - **Migración transparente** entre entornos
 
-### 🎨 Frontend Integrado
-- **Interfaz moderna** con gradientes y animaciones
-- **Diseño responsivo** para desktop, tablet y móvil
-- **Gestión visual** de productos con formularios intuitivos
-- **Notificaciones** y feedback visual para todas las operaciones
-
 ## 📁 Estructura del Proyecto
 
 ```
@@ -82,14 +75,12 @@ Entrega-Final-FIL/
 ├── 📁 models/               # Modelos de datos
 │   ├── productModel.js      # Modelo de productos
 │   └── userModel.js         # Modelo de usuarios
-├── 📁 public/               # Frontend de la aplicación
 ├── 📁 routes/               # Definición de rutas
 │   ├── authRoutes.js        # Rutas de autenticación
 │   └── productRoutes.js     # Rutas de productos
 ├── 📁 services/             # Servicios (Firestore)
-├── 📁 tests/                # Pruebas unitarias
 ├── 📄 index.js              # Punto de entrada del servidor
-├── 📄 package.json          # Dependencias y scripts
+├── 📄 package.json          # Dependencias
 └── 📄 README.md             # Esta documentación
 ```
 
@@ -167,7 +158,6 @@ node index.js
 
 Una vez que el servidor esté ejecutándose:
 
-- **Frontend**: http://localhost:3000
 - **API Base URL**: http://localhost:3000/api
 
 ## 📡 Endpoints de la API
@@ -338,7 +328,6 @@ FIREBASE_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\n...\n-----END PRIVATE KEY----
 - ✅ **API RESTful** - Completamente funcional
 - ✅ **Autenticación JWT** - Implementada y probada
 - ✅ **CRUD de productos** - Todas las operaciones funcionando
-- ✅ **Frontend integrado** - Interfaz moderna y responsiva
 - ✅ **Base de datos** - JSON local + Firebase/Firestore
 - ✅ **Despliegue** - Configurado para Vercel
 - ✅ **Documentación** - Completa y actualizada

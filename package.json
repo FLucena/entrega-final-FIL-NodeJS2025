@@ -6,11 +6,7 @@
   "type": "module",
   "scripts": {
     "start": "node index.js",
-    "dev": "nodemon index.js",
-    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js",
-    "port:check": "node scripts/port-manager.js check",
-    "port:kill": "node scripts/port-manager.js kill",
-    "port:list": "node scripts/port-manager.js list"
+    "dev": "nodemon index.js"
   },
   "keywords": [],
   "author": "Francisco Lucena",
