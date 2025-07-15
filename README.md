@@ -51,7 +51,7 @@ Este proyecto es una **API RESTful completa** desarrollada en Node.js para la ge
 - **CRUD completo**: Crear, Leer, Actualizar, Eliminar productos
 - **Validación de campos** obligatorios
 - **Búsqueda por ID** de productos específicos
-- **Gestión de stock** con indicadores visuales
+- **Gestión de stock** con control de inventario
 
 ### 🗄️ Base de Datos
 - **Datos locales**: Archivos JSON para desarrollo
