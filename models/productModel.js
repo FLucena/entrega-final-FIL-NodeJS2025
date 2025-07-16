@@ -1,16 +1,18 @@
 import fs from 'fs';
 import path from 'path';
 
-const dataPath = path.join(path.dirname(new URL(import.meta.url).pathname), '../data/products.json');
+const dataPath = path.join(path.dirname(new URL(import.meta.url).pathname), '../data/mockProducts.json');
 
 function readProducts() {
   if (!fs.existsSync(dataPath)) return [];
   const data = fs.readFileSync(dataPath);
-  return JSON.parse(data);
+  const parsed = JSON.parse(data);
+  return parsed.products || [];
 }
 
 function writeProducts(products) {
-  fs.writeFileSync(dataPath, JSON.stringify(products, null, 2));
+  const data = { products };
+  fs.writeFileSync(dataPath, JSON.stringify(data, null, 2));
 }
 
 export function getAll() {

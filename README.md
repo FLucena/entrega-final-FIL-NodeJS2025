@@ -27,8 +27,8 @@ Este proyecto es una **API RESTful completa** desarrollada en Node.js para la ge
 - **CORS** - Configuración cross-origin
 
 ### 🗄️ Base de Datos
-- **Firebase/Firestore** - Base de datos en la nube
-- **JSON Files** - Datos locales para desarrollo
+- **Firebase/Firestore** - Base de datos en la nube para producción
+- **JSON Files** - Datos mock locales para desarrollo y respaldo
 - **firebase-admin** - SDK de Firebase para Node.js
 
 ### 🚀 Despliegue
@@ -54,10 +54,10 @@ Este proyecto es una **API RESTful completa** desarrollada en Node.js para la ge
 - **Gestión de stock** con control de inventario
 
 ### 🗄️ Base de Datos
-- **Datos locales**: Archivos JSON para desarrollo
+- **Datos mock**: Archivos JSON para desarrollo y respaldo
 - **Firebase/Firestore**: Base de datos en la nube para producción
-- **Fallback automático**: Si Firebase falla, usa datos locales
-- **Migración transparente** entre entornos
+- **Fallback automático**: Si Firebase falla, usa datos mock locales
+- **Datos de ejemplo**: Productos y usuarios predefinidos para pruebas
 
 ## 📁 Estructura del Proyecto
 
@@ -68,8 +68,8 @@ Entrega-Final-FIL/
 │   ├── authController.js      # Autenticación (login/register)
 │   └── productController.js   # Gestión de productos
 ├── 📁 data/                  # Datos mock (JSON)
-│   ├── mockProducts.json     # Productos de ejemplo
-│   └── mockUsers.json        # Usuarios de ejemplo
+│   ├── mockProducts.json     # Productos de ejemplo para desarrollo
+│   └── mockUsers.json        # Usuarios de ejemplo para desarrollo
 ├── 📁 middleware/            # Middleware personalizado
 │   └── auth.js              # Verificación de JWT
 ├── 📁 models/               # Modelos de datos
@@ -104,20 +104,51 @@ npm install
 
 ### 3. Configurar Variables de Entorno
 
-#### Para Desarrollo Local
-Crea un archivo `.env` en la raíz del proyecto:
+#### Archivo .env.example (Guía de Variables)
+
+Para facilitar la configuración, puedes crear un archivo `.env.example` con la siguiente estructura:
 
 ```env
-# Configuración del servidor
+# Server Configuration
 PORT=3000
 
-# JWT Secret
+# JWT Configuration
+JWT_SECRET=supersecreto
+
+# Firebase Configuration
+FIREBASE_CLIENT_EMAIL=tu_email_cliente_firebase
+FIREBASE_TYPE=service_account
+FIREBASE_PROJECT_ID=id_proyecto_firebase
+FIREBASE_PRIVATE_KEY_ID=id_llave_privada_firebase
+FIREBASE_PRIVATE_KEY=llave_privada_firebase
+FIREBASE_CLIENT_ID=id_cliente_firebase
+FIREBASE_AUTH_URI=FIREBASE_AUTH_URI
+FIREBASE_TOKEN_URI=FIREBASE_TOKEN_URI
+FIREBASE_AUTH_PROVIDER_X509_CERT_URL=FIREBASE_AUTH_PROVIDER_X509_CERT_URL
+FIREBASE_CLIENT_X509_CERT_URL=FIREBASE_CLIENT_X509_CERT_URL
+```
+
+#### Para Desarrollo Local
+Crea un archivo `.env` en la raíz del proyecto basándote en el ejemplo anterior:
+
+```env
+# Server Configuration
+PORT=3000
+
+# JWT Configuration
 JWT_SECRET=tu-secreto-jwt-super-seguro
 
-# Firebase (opcional para desarrollo)
-FIREBASE_PROJECT_ID=tu-proyecto-firebase
+# Firebase Configuration (opcional para desarrollo)
 FIREBASE_CLIENT_EMAIL=tu-email@proyecto.iam.gserviceaccount.com
+FIREBASE_TYPE=service_account
+FIREBASE_PROJECT_ID=tu-proyecto-firebase
+FIREBASE_PRIVATE_KEY_ID=id_llave_privada_firebase
 FIREBASE_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\n...\n-----END PRIVATE KEY-----\n"
+FIREBASE_CLIENT_ID=id_cliente_firebase
+FIREBASE_AUTH_URI=https://accounts.google.com/o/oauth2/auth
+FIREBASE_TOKEN_URI=https://oauth2.googleapis.com/token
+FIREBASE_AUTH_PROVIDER_X509_CERT_URL=https://www.googleapis.com/oauth2/v1/certs
+FIREBASE_CLIENT_X509_CERT_URL=https://www.googleapis.com/robot/v1/metadata/x509/tu-email%40proyecto.iam.gserviceaccount.com
 ```
 
 #### Sobre NODE_ENV y nodemon
@@ -127,15 +158,36 @@ FIREBASE_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\n...\n-----END PRIVATE KEY----
     - `"NODE_ENV": "production"` → Usarás Firestore real
 - **Solo necesitas definir `NODE_ENV` en `.env` si ejecutas la app con `node index.js` o `npm start` directamente.**
 
-Ejemplo de `.env` para producción:
+#### Ejemplo de .env para producción:
 ```env
 PORT=3000
 NODE_ENV=production
-JWT_SECRET=tu-secreto
-FIREBASE_PROJECT_ID=...
-FIREBASE_CLIENT_EMAIL=...
-FIREBASE_PRIVATE_KEY=...
+JWT_SECRET=tu-secreto-super-seguro-produccion
+FIREBASE_CLIENT_EMAIL=tu-email@proyecto.iam.gserviceaccount.com
+FIREBASE_TYPE=service_account
+FIREBASE_PROJECT_ID=tu-proyecto-firebase
+FIREBASE_PRIVATE_KEY_ID=id_llave_privada_firebase
+FIREBASE_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\n...\n-----END PRIVATE KEY-----\n"
+FIREBASE_CLIENT_ID=id_cliente_firebase
+FIREBASE_AUTH_URI=https://accounts.google.com/o/oauth2/auth
+FIREBASE_TOKEN_URI=https://oauth2.googleapis.com/token
+FIREBASE_AUTH_PROVIDER_X509_CERT_URL=https://www.googleapis.com/oauth2/v1/certs
+FIREBASE_CLIENT_X509_CERT_URL=https://www.googleapis.com/robot/v1/metadata/x509/tu-email%40proyecto.iam.gserviceaccount.com
 ```
+
+#### 🔧 Cómo obtener las credenciales de Firebase:
+
+1. **Ve a la [Consola de Firebase](https://console.firebase.google.com/)**
+2. **Selecciona tu proyecto** (o crea uno nuevo)
+3. **Ve a Configuración del proyecto** (ícono de engranaje)
+4. **Pestaña "Cuentas de servicio"**
+5. **Haz clic en "Generar nueva clave privada"**
+6. **Descarga el archivo JSON** y copia todos los valores al archivo `.env`
+
+⚠️ **Importante**: 
+- Nunca subas el archivo `.env` al repositorio
+- Asegúrate de que `.env` esté en tu `.gitignore`
+- Usa diferentes credenciales para desarrollo y producción
 
 ### 4. Ejecutar la Aplicación
 
@@ -258,7 +310,7 @@ curl -X DELETE http://localhost:3000/api/products/:id \
 ### Configuración Inicial
 
 1. **Crear Colección**: "E-Commerce API"
-2. **Configurar Variables de Entorno**:
+2. **Configurar Variables de Postman**:
    - `baseUrl`: `http://localhost:3000/api`
    - `token`: (vacío inicialmente)
 
@@ -294,12 +346,31 @@ curl -X DELETE http://localhost:3000/api/products/:id \
 3. **Desplegar automáticamente** en cada push
 
 ### Variables de Entorno para Producción
+
+Para el despliegue en Vercel, configura las siguientes variables en el dashboard:
+
 ```env
+# Server Configuration
+PORT=3000
+NODE_ENV=production
+
+# JWT Configuration
 JWT_SECRET=secreto-super-seguro-produccion
-FIREBASE_PROJECT_ID=tu-proyecto-firebase
+
+# Firebase Configuration
 FIREBASE_CLIENT_EMAIL=tu-email@proyecto.iam.gserviceaccount.com
+FIREBASE_TYPE=service_account
+FIREBASE_PROJECT_ID=tu-proyecto-firebase
+FIREBASE_PRIVATE_KEY_ID=id_llave_privada_firebase
 FIREBASE_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\n...\n-----END PRIVATE KEY-----\n"
+FIREBASE_CLIENT_ID=id_cliente_firebase
+FIREBASE_AUTH_URI=https://accounts.google.com/o/oauth2/auth
+FIREBASE_TOKEN_URI=https://oauth2.googleapis.com/token
+FIREBASE_AUTH_PROVIDER_X509_CERT_URL=https://www.googleapis.com/oauth2/v1/certs
+FIREBASE_CLIENT_X509_CERT_URL=https://www.googleapis.com/robot/v1/metadata/x509/tu-email%40proyecto.iam.gserviceaccount.com
 ```
+
+> **Nota**: Estas son las mismas variables que se configuran localmente, pero con valores de producción.
 
 ## 🐛 Solución de Problemas
 
@@ -328,7 +399,7 @@ FIREBASE_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\n...\n-----END PRIVATE KEY----
 - ✅ **API RESTful** - Completamente funcional
 - ✅ **Autenticación JWT** - Implementada y probada
 - ✅ **CRUD de productos** - Todas las operaciones funcionando
-- ✅ **Base de datos** - JSON local + Firebase/Firestore
+- ✅ **Base de datos** - Datos mock JSON + Firebase/Firestore
 - ✅ **Despliegue** - Configurado para Vercel
 - ✅ **Documentación** - Completa y actualizada
 
