@@ -15,11 +15,13 @@ Este proyecto es una **API RESTful completa** desarrollada en Node.js para la ge
 ## 🛠️ Tecnologías Utilizadas
 
 ### 🎯 Backend
+
 - **Node.js** - Runtime de JavaScript
 - **Express.js** - Framework web para Node.js
 - **ES6 Modules** - Sistema de módulos moderno
 
 ### 🔐 Autenticación y Seguridad
+
 - **JWT (JSON Web Tokens)** - Autenticación de usuarios
 - **bcryptjs** - Encriptación de contraseñas
 - **express-rate-limit** - Rate limiting para prevenir ataques
@@ -27,20 +29,24 @@ Este proyecto es una **API RESTful completa** desarrollada en Node.js para la ge
 - **CORS** - Configuración cross-origin
 
 ### 🗄️ Base de Datos
+
 - **Firebase/Firestore** - Base de datos en la nube para producción
 - **JSON Files** - Datos mock locales para desarrollo y respaldo
 - **firebase-admin** - SDK de Firebase para Node.js
 
 ### 🚀 Despliegue
+
 - **Vercel** - Plataforma de despliegue
 - **dotenv** - Gestión de variables de entorno
 
 ### 🛠️ Desarrollo
+
 - **nodemon** - Reinicio automático en desarrollo
 
 ## 🚀 Características Principales
 
 ### 🔐 Autenticación y Seguridad
+
 - **JWT (JSON Web Tokens)** para autenticación de usuarios
 - **Rate limiting** para prevenir ataques de fuerza bruta
 - **CORS configurado** para peticiones cross-origin
@@ -48,12 +54,14 @@ Este proyecto es una **API RESTful completa** desarrollada en Node.js para la ge
 - **Validación de datos** en todos los endpoints
 
 ### 📦 Gestión de Productos
+
 - **CRUD completo**: Crear, Leer, Actualizar, Eliminar productos
 - **Validación de campos** obligatorios
 - **Búsqueda por ID** de productos específicos
 - **Gestión de stock** con control de inventario
 
 ### 🗄️ Base de Datos
+
 - **Datos mock**: Archivos JSON para desarrollo y respaldo
 - **Firebase/Firestore**: Base de datos en la nube para producción
 - **Fallback automático**: Si Firebase falla, usa datos mock locales
@@ -87,49 +95,29 @@ Entrega-Final-FIL/
 ## 🛠️ Instalación y Configuración
 
 ### Prerrequisitos
+
 - **Node.js** (versión 16 o superior)
 - **npm** o **yarn**
 - **Cuenta de Firebase** (para producción)
 
 ### 1. Clonar el Repositorio
+
 ```bash
 git clone <url-del-repositorio>
 cd Entrega-Final-FIL
 ```
 
 ### 2. Instalar Dependencias
+
 ```bash
 npm install
 ```
 
 ### 3. Configurar Variables de Entorno
 
-#### Archivo .env.example (Guía de Variables)
-
-Para facilitar la configuración, puedes crear un archivo `.env.example` con la siguiente estructura:
-
-```env
-# Server Configuration
-PORT=3000
-
-# JWT Configuration
-JWT_SECRET=supersecreto
-
-# Firebase Configuration
-FIREBASE_CLIENT_EMAIL=tu_email_cliente_firebase
-FIREBASE_TYPE=service_account
-FIREBASE_PROJECT_ID=id_proyecto_firebase
-FIREBASE_PRIVATE_KEY_ID=id_llave_privada_firebase
-FIREBASE_PRIVATE_KEY=llave_privada_firebase
-FIREBASE_CLIENT_ID=id_cliente_firebase
-FIREBASE_AUTH_URI=FIREBASE_AUTH_URI
-FIREBASE_TOKEN_URI=FIREBASE_TOKEN_URI
-FIREBASE_AUTH_PROVIDER_X509_CERT_URL=FIREBASE_AUTH_PROVIDER_X509_CERT_URL
-FIREBASE_CLIENT_X509_CERT_URL=FIREBASE_CLIENT_X509_CERT_URL
-```
-
 #### Para Desarrollo Local
-Crea un archivo `.env` en la raíz del proyecto basándote en el ejemplo anterior:
+
+Crea un archivo `.env` en la raíz del proyecto basándote en el ejemplo siguiente:
 
 ```env
 # Server Configuration
@@ -152,28 +140,25 @@ FIREBASE_CLIENT_X509_CERT_URL=https://www.googleapis.com/robot/v1/metadata/x509/
 ```
 
 #### Sobre NODE_ENV y nodemon
+
 - Cuando usas `npm run dev` (o ejecutas nodemon), el valor de `NODE_ENV` se toma automáticamente del archivo `nodemon.json`.
   - Si en `nodemon.json` tienes:
     - `"NODE_ENV": "development"` → Usarás datos mock (JSON local)
     - `"NODE_ENV": "production"` → Usarás Firestore real
 - **Solo necesitas definir `NODE_ENV` en `.env` si ejecutas la app con `node index.js` o `npm start` directamente.**
 
-#### Ejemplo de .env para producción:
-```env
-PORT=3000
-NODE_ENV=production
-JWT_SECRET=tu-secreto-super-seguro-produccion
-FIREBASE_CLIENT_EMAIL=tu-email@proyecto.iam.gserviceaccount.com
-FIREBASE_TYPE=service_account
-FIREBASE_PROJECT_ID=tu-proyecto-firebase
-FIREBASE_PRIVATE_KEY_ID=id_llave_privada_firebase
-FIREBASE_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\n...\n-----END PRIVATE KEY-----\n"
-FIREBASE_CLIENT_ID=id_cliente_firebase
-FIREBASE_AUTH_URI=https://accounts.google.com/o/oauth2/auth
-FIREBASE_TOKEN_URI=https://oauth2.googleapis.com/token
-FIREBASE_AUTH_PROVIDER_X509_CERT_URL=https://www.googleapis.com/oauth2/v1/certs
-FIREBASE_CLIENT_X509_CERT_URL=https://www.googleapis.com/robot/v1/metadata/x509/tu-email%40proyecto.iam.gserviceaccount.com
+#### 🔧 Configuración Recomendada
+
+Para desarrollo local, se recomienda configurar `nodemon.json` con:
+```json
+{
+  "env": {
+    "NODE_ENV": "development"
+  }
+}
 ```
+
+Esto te permitirá usar datos mock locales durante el desarrollo sin necesidad de configurar Firebase.
 
 #### 🔧 Cómo obtener las credenciales de Firebase:
 
@@ -184,7 +169,8 @@ FIREBASE_CLIENT_X509_CERT_URL=https://www.googleapis.com/robot/v1/metadata/x509/
 5. **Haz clic en "Generar nueva clave privada"**
 6. **Descarga el archivo JSON** y copia todos los valores al archivo `.env`
 
-⚠️ **Importante**: 
+⚠️ **Importante**:
+
 - Nunca subas el archivo `.env` al repositorio
 - Asegúrate de que `.env` esté en tu `.gitignore`
 - Usa diferentes credenciales para desarrollo y producción
@@ -192,16 +178,19 @@ FIREBASE_CLIENT_X509_CERT_URL=https://www.googleapis.com/robot/v1/metadata/x509/
 ### 4. Ejecutar la Aplicación
 
 #### Modo Desarrollo (con reinicio automático)
+
 ```bash
 npm run dev
 ```
 
 #### Modo Producción
+
 ```bash
 npm start
 ```
 
 #### Ejecutar directamente
+
 ```bash
 node index.js
 ```
@@ -216,27 +205,28 @@ Una vez que el servidor esté ejecutándose:
 
 ### 🔐 Autenticación (`/api/auth`)
 
-| Método | Endpoint | Descripción | Autenticación |
-|--------|----------|-------------|---------------|
-| `POST` | `/api/auth/register` | Registrar nuevo usuario | ❌ No requiere |
-| `POST` | `/api/auth/login` | Iniciar sesión | ❌ No requiere |
+
+| Método | Endpoint             | Descripción            | Autenticación |
+| --------- | ---------------------- | ------------------------- | ---------------- |
+| `POST`  | `/api/auth/register` | Registrar nuevo usuario | ❌ No requiere |
+| `POST`  | `/api/auth/login`    | Iniciar sesión         | ❌ No requiere |
 
 ### 📦 Productos (`/api/products`)
 
-| Método | Endpoint | Descripción | Autenticación |
-|--------|----------|-------------|---------------|
-| `GET` | `/api/products` | Obtener todos los productos | ❌ No requiere |
-| `GET` | `/api/products/:id` | Obtener producto por ID | ❌ No requiere |
-| `POST` | `/api/products` | Crear nuevo producto | ✅ Requiere JWT |
-| `PUT` | `/api/products/:id` | Actualizar producto completo | ✅ Requiere JWT |
-| `PATCH` | `/api/products/:id` | Actualizar producto parcialmente | ✅ Requiere JWT |
-| `DELETE` | `/api/products/:id` | Eliminar producto | ✅ Requiere JWT |
 
-
+| Método  | Endpoint            | Descripción                     | Autenticación  |
+| ---------- | --------------------- | ---------------------------------- | ----------------- |
+| `GET`    | `/api/products`     | Obtener todos los productos      | ❌ No requiere  |
+| `GET`    | `/api/products/:id` | Obtener producto por ID          | ❌ No requiere  |
+| `POST`   | `/api/products`     | Crear nuevo producto             | ✅ Requiere JWT |
+| `PUT`    | `/api/products/:id` | Actualizar producto completo     | ✅ Requiere JWT |
+| `PATCH`  | `/api/products/:id` | Actualizar producto parcialmente | ✅ Requiere JWT |
+| `DELETE` | `/api/products/:id` | Eliminar producto                | ✅ Requiere JWT |
 
 ## 🔧 Ejemplos de Uso
 
 ### 1. Registro de Usuario
+
 ```bash
 curl -X POST http://localhost:3000/api/auth/register \
   -H "Content-Type: application/json" \
@@ -248,6 +238,7 @@ curl -X POST http://localhost:3000/api/auth/register \
 ```
 
 ### 2. Inicio de Sesión
+
 ```bash
 curl -X POST http://localhost:3000/api/auth/login \
   -H "Content-Type: application/json" \
@@ -258,6 +249,7 @@ curl -X POST http://localhost:3000/api/auth/login \
 ```
 
 ### 3. Crear Producto (Requiere Token)
+
 ```bash
 curl -X POST http://localhost:3000/api/products \
   -H "Content-Type: application/json" \
@@ -271,11 +263,13 @@ curl -X POST http://localhost:3000/api/products \
 ```
 
 ### 4. Obtener Todos los Productos
+
 ```bash
 curl -X GET http://localhost:3000/api/products
 ```
 
 ### 5. Actualizar Producto Parcialmente (Requiere Token)
+
 ```bash
 curl -X PATCH http://localhost:3000/api/products/:id \
   -H "Content-Type: application/json" \
@@ -287,6 +281,7 @@ curl -X PATCH http://localhost:3000/api/products/:id \
 ```
 
 ### 6. Actualizar Producto Completo (Requiere Token)
+
 ```bash
 curl -X PUT http://localhost:3000/api/products/:id \
   -H "Content-Type: application/json" \
@@ -300,6 +295,7 @@ curl -X PUT http://localhost:3000/api/products/:id \
 ```
 
 ### 7. Eliminar Producto (Requiere Token)
+
 ```bash
 curl -X DELETE http://localhost:3000/api/products/:id \
   -H "Authorization: Bearer TU_TOKEN_JWT"
@@ -323,15 +319,18 @@ curl -X DELETE http://localhost:3000/api/products/:id \
 ## 🔒 Seguridad
 
 ### Rate Limiting
+
 - **Endpoints generales**: 100 requests por 15 minutos
 - **Endpoints de auth**: 5 intentos por hora
 
 ### Headers de Seguridad
+
 - **Helmet** configurado para prevenir ataques comunes
 - **CORS** configurado para orígenes permitidos
 - **Content Security Policy** habilitado
 
 ### Validaciones
+
 - **Campos requeridos** en todos los endpoints
 - **Formato de email** validado
 - **Longitud de contraseña** mínima (6 caracteres)
@@ -375,21 +374,25 @@ FIREBASE_CLIENT_X509_CERT_URL=https://www.googleapis.com/robot/v1/metadata/x509/
 ## 🐛 Solución de Problemas
 
 ### Error 404 - Ruta no encontrada
+
 - Verificar que el servidor esté ejecutándose
 - Comprobar la URL del endpoint
 - Revisar que el puerto sea correcto
 
 ### Error 401 - No autorizado
+
 - Verificar que el token JWT sea válido
 - Comprobar el formato: `Bearer TOKEN`
 - Asegurar que el token no haya expirado
 
 ### Error 400 - Bad Request
+
 - Verificar que todos los campos requeridos estén presentes
 - Comprobar el formato de los datos enviados
 - Validar tipos de datos (string, number, etc.)
 
 ### Error 500 - Error interno
+
 - Revisar logs del servidor
 - Verificar configuración de Firebase
 - Comprobar variables de entorno
@@ -418,6 +421,7 @@ Este proyecto es parte del curso de Node.js de Talento Tech.
 ## 👨‍💻 Autor
 
 **Francisco Lucena**
+
 - 📧 Email: [franciscolucena90@gmail.com]
 - 🔗 LinkedIn: [https://www.linkedin.com/in/franciscoivanlucena/]
 - 🐙 GitHub: [https://github.com/FLucena]
