@@ -46,6 +46,13 @@ Este proyecto es una **API RESTful completa** desarrollada en Node.js para la ge
 
 ## 🚀 Características Principales
 
+### 🏗️ Arquitectura y Código Limpio
+
+- **Separación de responsabilidades**: Controladores, Servicios y Modelos bien definidos
+- **Código DRY**: Sin duplicados, helpers centralizados para respuestas HTTP
+- **Respuestas consistentes**: Formato estandarizado en toda la API
+- **Manejo de errores unificado**: Sistema centralizado de manejo de errores
+
 ### 🔐 Autenticación y Seguridad
 
 - **JWT (JSON Web Tokens)** para autenticación de usuarios
@@ -92,7 +99,8 @@ Entrega-Final-FIL/
 │   └── productService.js    # Lógica CRUD de productos, validaciones
 ├── 📁 utils/                # Utilidades reutilizables
 │   ├── validation.js        # Validaciones de email, password, campos, etc.
-│   └── jwt.js               # Funciones para generar/verificar tokens
+│   ├── jwt.js               # Funciones para generar/verificar tokens
+│   └── responseHandler.js   # Helpers para manejo de respuestas HTTP
 ├── 📄 index.js              # Punto de entrada del servidor
 ├── 📄 package.json          # Dependencias
 └── 📄 README.md             # Esta documentación
@@ -123,7 +131,10 @@ Entrega-Final-FIL/
 
 #### **Utils** (`/utils/`)
 - **Responsabilidad**: Funciones reutilizables y helpers
-- **Ejemplo**: `validation.js` y `jwt.js` contienen funciones auxiliares
+- **Ejemplo**: 
+  - `validation.js` - Validaciones de datos
+  - `jwt.js` - Funciones para generar/verificar tokens
+  - `responseHandler.js` - Helpers para respuestas HTTP consistentes
 
 ### 🔄 Flujo de Datos
 
@@ -148,6 +159,8 @@ Esta arquitectura facilita:
 - ✅ **Testing**: Cada capa puede probarse independientemente
 - ✅ **Escalabilidad**: Fácil agregar nuevas funcionalidades
 - ✅ **Legibilidad**: Código organizado y fácil de entender
+- ✅ **Consistencia**: Respuestas HTTP estandarizadas
+- ✅ **DRY**: Sin código duplicado entre capas
 
 ## 🛠️ Instalación y Configuración
 
@@ -545,6 +558,8 @@ FIREBASE_CLIENT_X509_CERT_URL=https://www.googleapis.com/robot/v1/metadata/x509/
 - ✅ **Arquitectura limpia** - Separación clara de responsabilidades
 - ✅ **Manejo de errores** - Robustos y consistentes
 - ✅ **Validaciones** - Completas en todos los endpoints
+- ✅ **Código DRY** - Sin duplicados, helpers centralizados
+- ✅ **Respuestas consistentes** - Formato estandarizado en toda la API
 
 ## 🤝 Contribución
 
