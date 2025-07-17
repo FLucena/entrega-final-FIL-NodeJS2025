@@ -1,12 +1,5 @@
-import { db } from '../config/firebase.js';
 import jwt from 'jsonwebtoken';
-import { readFile } from 'fs/promises';
-import { fileURLToPath } from 'url';
-import { dirname, join } from 'path';
 import { getAllProducts, getProductById, createProduct, updateProduct, deleteProduct, patchProduct } from '../services/productService.js';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
 
 export const verifyToken = (req, res, next) => {
   const token = req.headers.authorization?.split(' ')[1];
@@ -22,38 +15,6 @@ export const verifyToken = (req, res, next) => {
     res.status(401).json({ error: 'Token inválido' });
   }
 };
-
-async function loadMockData() {
-  try {
-    const mockDataPath = join(__dirname, '..', 'data', 'mockProducts.json');
-    const mockData = await readFile(mockDataPath, 'utf-8');
-    const parsedData = JSON.parse(mockData);
-    return parsedData.products || [];
-  } catch (error) {
-    return [];
-  }
-}
-
-// --- Funciones auxiliares para validación y utilidades ---
-function isValidProductFields({ name, description, price, stock }) {
-  return name && description && price && stock;
-}
-
-function isValidPatchFields(updateData) {
-  if (!updateData || Object.keys(updateData).length === 0) return false;
-  const allowedFields = ['name', 'description', 'price', 'stock'];
-  return Object.keys(updateData).every(field => allowedFields.includes(field));
-}
-
-function toNumberIfPresent(obj, fields) {
-  const result = { ...obj };
-  fields.forEach(field => {
-    if (result[field] !== undefined) {
-      result[field] = Number(result[field]);
-    }
-  });
-  return result;
-}
 
 export const getProductsController = async (req, res) => {
   try {
