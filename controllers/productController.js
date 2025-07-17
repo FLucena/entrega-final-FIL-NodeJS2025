@@ -55,7 +55,7 @@ function toNumberIfPresent(obj, fields) {
   return result;
 }
 
-export const getProducts = async (req, res) => {
+export const getProductsController = async (req, res) => {
   try {
     const products = await getAllProducts();
     res.json(products);
@@ -64,7 +64,7 @@ export const getProducts = async (req, res) => {
   }
 };
 
-export const getProductById = async (req, res) => {
+export const getProductByIdController = async (req, res) => {
   try {
     const { id } = req.params;
     const product = await getProductById(id);
@@ -77,7 +77,7 @@ export const getProductById = async (req, res) => {
   }
 };
 
-export const createProduct = async (req, res) => {
+export const createProductController = async (req, res) => {
   try {
     const result = await createProduct(req.body);
     res.status(201).json(result);
@@ -86,7 +86,7 @@ export const createProduct = async (req, res) => {
   }
 };
 
-export const updateProduct = async (req, res) => {
+export const updateProductController = async (req, res) => {
   try {
     const { id } = req.params;
     const result = await updateProduct(id, req.body);
@@ -96,7 +96,7 @@ export const updateProduct = async (req, res) => {
   }
 };
 
-export const deleteProduct = async (req, res) => {
+export const deleteProductController = async (req, res) => {
   try {
     const { id } = req.params;
     const result = await deleteProduct(id);
@@ -106,7 +106,7 @@ export const deleteProduct = async (req, res) => {
   }
 };
 
-export const patchProduct = async (req, res) => {
+export const patchProductController = async (req, res) => {
   try {
     const { id } = req.params;
     const result = await patchProduct(id, req.body);

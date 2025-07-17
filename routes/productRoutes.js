@@ -1,14 +1,14 @@
 import { Router } from 'express';
-import { getProducts, getProductById, createProduct, updateProduct, deleteProduct, patchProduct } from '../controllers/productController.js';
+import { getProductsController, getProductByIdController, createProductController, updateProductController, deleteProductController, patchProductController } from '../controllers/productController.js';
 import { verifyToken } from '../middleware/auth.js';
 
 const router = Router();
 
-router.get('/', getProducts);
-router.get('/:id', getProductById);
-router.post('/', verifyToken, createProduct);
-router.put('/:id', verifyToken, updateProduct);
-router.patch('/:id', verifyToken, patchProduct);
-router.delete('/:id', verifyToken, deleteProduct);
+router.get('/', getProductsController);
+router.get('/:id', getProductByIdController);
+router.post('/', verifyToken, createProductController);
+router.put('/:id', verifyToken, updateProductController);
+router.patch('/:id', verifyToken, patchProductController);
+router.delete('/:id', verifyToken, deleteProductController);
 
 export default router; 
