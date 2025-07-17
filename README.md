@@ -11,6 +11,7 @@ Este proyecto es una **API RESTful completa** desarrollada en Node.js para la ge
 - ✅ **Persistencia de datos** en archivos JSON y Firebase/Firestore
 - ✅ **Despliegue en producción** con Vercel
 - ✅ **Manejo de errores** y validaciones robustas
+- ✅ **Arquitectura limpia** con separación clara de responsabilidades
 
 ## 🛠️ Tecnologías Utilizadas
 
@@ -80,15 +81,15 @@ Entrega-Final-FIL/
 │   └── mockUsers.json        # Usuarios de ejemplo para desarrollo
 ├── 📁 middleware/            # Middleware personalizado
 │   └── auth.js              # Verificación de JWT
-├── 📁 models/               # Modelos de datos (mock local)
-│   ├── productModel.js      # Modelo de productos
-│   └── userModel.js         # Modelo de usuarios
+├── 📁 models/               # Modelos de datos (acceso a base de datos)
+│   ├── productModel.js      # Modelo de productos (Firestore + JSON)
+│   └── userModel.js         # Modelo de usuarios (Firestore + JSON)
 ├── 📁 routes/               # Definición de rutas
 │   ├── authRoutes.js        # Rutas de autenticación
 │   └── productRoutes.js     # Rutas de productos
-├── 📁 services/             # Lógica de negocio y acceso a datos
-│   ├── authService.js       # Lógica de registro/login, validaciones, mock y Firestore
-│   └── productService.js    # Lógica CRUD de productos, mock y Firestore
+├── 📁 services/             # Lógica de negocio
+│   ├── authService.js       # Lógica de registro/login, validaciones
+│   └── productService.js    # Lógica CRUD de productos, validaciones
 ├── 📁 utils/                # Utilidades reutilizables
 │   ├── validation.js        # Validaciones de email, password, campos, etc.
 │   └── jwt.js               # Funciones para generar/verificar tokens
@@ -97,13 +98,56 @@ Entrega-Final-FIL/
 └── 📄 README.md             # Esta documentación
 ```
 
-### 🧩 Separación de responsabilidades
+### 🧩 Arquitectura y Separación de Responsabilidades
 
-- **Controladores**: Reciben la request, llaman al servicio correspondiente y devuelven la respuesta. No contienen lógica de negocio compleja.
-- **Servicios**: Implementan la lógica de negocio, validaciones, acceso a Firestore o mock, y devuelven los datos listos para responder.
-- **Utils**: Funciones reutilizables para validaciones y JWT.
+#### **Controladores** (`/controllers/`)
+- **Responsabilidad**: Reciben las peticiones HTTP, extraen datos y devuelven respuestas
+- **No contienen**: Lógica de negocio compleja ni acceso directo a datos
+- **Ejemplo**: `productController.js` llama a `productService.js` y maneja respuestas HTTP
 
-Esta organización facilita el mantenimiento, la escalabilidad y la legibilidad del código.
+#### **Servicios** (`/services/`)
+- **Responsabilidad**: Contienen toda la lógica de negocio, validaciones y reglas
+- **Usan**: Los modelos para acceder a los datos
+- **No acceden**: Directamente a la base de datos
+- **Ejemplo**: `productService.js` valida datos y usa `productModel.js` para persistencia
+
+#### **Modelos** (`/models/`)
+- **Responsabilidad**: Manejan toda la interacción con la base de datos
+- **Soportan**: Firestore (producción) y archivos JSON (desarrollo/fallback)
+- **Proporcionan**: API unificada para acceso a datos
+- **Ejemplo**: `productModel.js` decide si usar Firestore o JSON según `NODE_ENV`
+
+#### **Middleware** (`/middleware/`)
+- **Responsabilidad**: Funciones que se ejecutan entre la petición y la respuesta
+- **Ejemplo**: `auth.js` verifica tokens JWT antes de permitir acceso
+
+#### **Utils** (`/utils/`)
+- **Responsabilidad**: Funciones reutilizables y helpers
+- **Ejemplo**: `validation.js` y `jwt.js` contienen funciones auxiliares
+
+### 🔄 Flujo de Datos
+
+```
+Cliente HTTP → Routes → Controllers → Services → Models → Base de Datos
+                ↓           ↓           ↓         ↓
+              Middleware  Respuesta  Lógica    Persistencia
+```
+
+**Ejemplo de flujo para crear un producto:**
+
+1. **Cliente** envía POST a `/api/products`
+2. **Routes** (`productRoutes.js`) recibe la petición
+3. **Middleware** (`auth.js`) verifica el token JWT
+4. **Controller** (`productController.js`) extrae datos del body
+5. **Service** (`productService.js`) valida datos y aplica lógica de negocio
+6. **Model** (`productModel.js`) guarda en Firestore o JSON según `NODE_ENV`
+7. **Respuesta** fluye de vuelta por la cadena hasta el cliente
+
+Esta arquitectura facilita:
+- ✅ **Mantenimiento**: Cambios aislados en cada capa
+- ✅ **Testing**: Cada capa puede probarse independientemente
+- ✅ **Escalabilidad**: Fácil agregar nuevas funcionalidades
+- ✅ **Legibilidad**: Código organizado y fácil de entender
 
 ## 🛠️ Instalación y Configuración
 
@@ -218,146 +262,227 @@ Una vez que el servidor esté ejecutándose:
 
 ### 🔐 Autenticación (`/api/auth`)
 
+#### POST `/api/auth/register`
+Registra un nuevo usuario.
 
-| Método | Endpoint             | Descripción            | Autenticación |
-| --------- | ---------------------- | ------------------------- | ---------------- |
-| `POST`  | `/api/auth/register` | Registrar nuevo usuario | ❌ No requiere |
-| `POST`  | `/api/auth/login`    | Iniciar sesión         | ❌ No requiere |
+**Body:**
+```json
+{
+  "email": "usuario@ejemplo.com",
+  "password": "contraseña123",
+  "name": "Nombre Usuario"
+}
+```
+
+**Respuesta exitosa (201):**
+```json
+{
+  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+  "user": {
+    "id": "1",
+    "email": "usuario@ejemplo.com",
+    "name": "Nombre Usuario"
+  },
+  "message": "Usuario registrado correctamente"
+}
+```
+
+#### POST `/api/auth/login`
+Inicia sesión con un usuario existente.
+
+**Body:**
+```json
+{
+  "email": "usuario@ejemplo.com",
+  "password": "contraseña123"
+}
+```
+
+**Respuesta exitosa (200):**
+```json
+{
+  "token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+  "user": {
+    "id": "1",
+    "email": "usuario@ejemplo.com",
+    "name": "Nombre Usuario"
+  },
+  "message": "Inicio de sesión exitoso"
+}
+```
 
 ### 📦 Productos (`/api/products`)
 
-
-| Método  | Endpoint            | Descripción                     | Autenticación  |
-| ---------- | --------------------- | ---------------------------------- | ----------------- |
-| `GET`    | `/api/products`     | Obtener todos los productos      | ❌ No requiere  |
-| `GET`    | `/api/products/:id` | Obtener producto por ID          | ❌ No requiere  |
-| `POST`   | `/api/products`     | Crear nuevo producto             | ✅ Requiere JWT |
-| `PUT`    | `/api/products/:id` | Actualizar producto completo     | ✅ Requiere JWT |
-| `PATCH`  | `/api/products/:id` | Actualizar producto parcialmente | ✅ Requiere JWT |
-| `DELETE` | `/api/products/:id` | Eliminar producto                | ✅ Requiere JWT |
-
-## 🔧 Ejemplos de Uso
-
-### 1. Registro de Usuario
-
-```bash
-curl -X POST http://localhost:3000/api/auth/register \
-  -H "Content-Type: application/json" \
-  -d '{
-    "email": "usuario@ejemplo.com",
-    "password": "123456",
-    "name": "Usuario Ejemplo"
-  }'
+**Nota:** Todos los endpoints de productos (excepto GET) requieren autenticación JWT en el header:
+```
+Authorization: Bearer <token>
 ```
 
-### 2. Inicio de Sesión
+#### GET `/api/products`
+Obtiene todos los productos.
 
-```bash
-curl -X POST http://localhost:3000/api/auth/login \
-  -H "Content-Type: application/json" \
-  -d '{
-    "email": "usuario@ejemplo.com",
-    "password": "123456"
-  }'
+**Respuesta exitosa (200):**
+```json
+[
+  {
+    "id": "1",
+    "name": "Laptop Gaming",
+    "description": "Potente laptop para gaming",
+    "price": 1299.99,
+    "stock": 10,
+    "createdAt": "2024-01-15T10:30:00.000Z"
+  }
+]
 ```
 
-### 3. Crear Producto (Requiere Token)
+#### GET `/api/products/:id`
+Obtiene un producto específico por ID.
 
-```bash
-curl -X POST http://localhost:3000/api/products \
-  -H "Content-Type: application/json" \
-  -H "Authorization: Bearer TU_TOKEN_JWT" \
-  -d '{
-    "name": "Producto Ejemplo",
+**Respuesta exitosa (200):**
+```json
+{
+  "message": "Producto obtenido correctamente",
+  "product": {
+    "id": "1",
+    "name": "Laptop Gaming",
+    "description": "Potente laptop para gaming",
+    "price": 1299.99,
+    "stock": 10,
+    "createdAt": "2024-01-15T10:30:00.000Z"
+  }
+}
+```
+
+#### POST `/api/products`
+Crea un nuevo producto (requiere autenticación).
+
+**Body:**
+```json
+{
+  "name": "Nuevo Producto",
+  "description": "Descripción del producto",
+  "price": 99.99,
+  "stock": 50
+}
+```
+
+**Respuesta exitosa (201):**
+```json
+{
+  "product": {
+    "id": "2",
+    "name": "Nuevo Producto",
     "description": "Descripción del producto",
     "price": 99.99,
-    "stock": 100
-  }'
+    "stock": 50,
+    "createdAt": "2024-01-15T10:30:00.000Z"
+  },
+  "message": "Producto creado correctamente"
+}
 ```
 
-### 4. Obtener Todos los Productos
+#### PUT `/api/products/:id`
+Actualiza completamente un producto (requiere autenticación).
 
-```bash
-curl -X GET http://localhost:3000/api/products
+**Body:**
+```json
+{
+  "name": "Producto Actualizado",
+  "description": "Nueva descripción",
+  "price": 149.99,
+  "stock": 25
+}
 ```
 
-### 5. Actualizar Producto Parcialmente (Requiere Token)
-
-```bash
-curl -X PATCH http://localhost:3000/api/products/:id \
-  -H "Content-Type: application/json" \
-  -H "Authorization: Bearer TU_TOKEN_JWT" \
-  -d '{
-    "price": 89.99,
-    "stock": 50
-  }'
-```
-
-### 6. Actualizar Producto Completo (Requiere Token)
-
-```bash
-curl -X PUT http://localhost:3000/api/products/:id \
-  -H "Content-Type: application/json" \
-  -H "Authorization: Bearer TU_TOKEN_JWT" \
-  -d '{
+**Respuesta exitosa (200):**
+```json
+{
+  "product": {
+    "id": "1",
     "name": "Producto Actualizado",
-    "description": "Nueva descripción del producto",
+    "description": "Nueva descripción",
     "price": 149.99,
-    "stock": 75
-  }'
+    "stock": 25,
+    "updatedAt": "2024-01-15T10:30:00.000Z"
+  },
+  "message": "Producto actualizado correctamente"
+}
 ```
 
-### 7. Eliminar Producto (Requiere Token)
+#### PATCH `/api/products/:id`
+Actualiza parcialmente un producto (requiere autenticación).
 
-```bash
-curl -X DELETE http://localhost:3000/api/products/:id \
-  -H "Authorization: Bearer TU_TOKEN_JWT"
+**Body:**
+```json
+{
+  "price": 199.99,
+  "stock": 15
+}
 ```
 
-## 🧪 Pruebas con Postman
+**Respuesta exitosa (200):**
+```json
+{
+  "product": {
+    "id": "1",
+    "name": "Laptop Gaming",
+    "description": "Potente laptop para gaming",
+    "price": 199.99,
+    "stock": 15,
+    "updatedAt": "2024-01-15T10:30:00.000Z"
+  },
+  "message": "Producto actualizado parcialmente correctamente"
+}
+```
 
-### Configuración Inicial
+#### DELETE `/api/products/:id`
+Elimina un producto (requiere autenticación).
 
-1. **Crear Colección**: "E-Commerce API"
-2. **Configurar Variables de Postman**:
-   - `baseUrl`: `http://localhost:3000/api`
-   - `token`: (vacío inicialmente)
+**Respuesta exitosa (200):**
+```json
+{
+  "message": "Producto eliminado correctamente"
+}
+```
 
-### Flujo de Pruebas
+## 🚀 Despliegue en Vercel
 
-1. **Registro/Login** → Obtener token JWT
-2. **Configurar token** en encabezado de Postman
-3. **Probar CRUD** de productos con token
+### 1. Preparar el Proyecto
 
-## 🔒 Seguridad
+Asegúrate de que tu `package.json` tenga los scripts correctos:
 
-### Rate Limiting
+```json
+{
+  "scripts": {
+    "start": "node index.js",
+    "dev": "nodemon index.js"
+  }
+}
+```
 
-- **Endpoints generales**: 100 requests por 15 minutos
-- **Endpoints de auth**: 5 intentos por hora
+### 2. Configurar Vercel
 
-### Headers de Seguridad
+Crea un archivo `vercel.json` en la raíz del proyecto:
 
-- **Helmet** configurado para prevenir ataques comunes
-- **CORS** configurado para orígenes permitidos
-- **Content Security Policy** habilitado
+```json
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "index.js",
+      "use": "@vercel/node"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "index.js"
+    }
+  ]
+}
+```
 
-### Validaciones
-
-- **Campos requeridos** en todos los endpoints
-- **Formato de email** validado
-- **Longitud de contraseña** mínima (6 caracteres)
-- **Tipos de datos** validados
-
-## 🚀 Despliegue
-
-### Vercel (Recomendado)
-
-1. **Conectar repositorio** a Vercel
-2. **Configurar variables de entorno** en el dashboard
-3. **Desplegar automáticamente** en cada push
-
-### Variables de Entorno para Producción
+### 3. Variables de Entorno en Vercel
 
 Para el despliegue en Vercel, configura las siguientes variables en el dashboard:
 
@@ -417,19 +542,21 @@ FIREBASE_CLIENT_X509_CERT_URL=https://www.googleapis.com/robot/v1/metadata/x509/
 - ✅ **CRUD de productos** - Todas las operaciones funcionando
 - ✅ **Base de datos** - Datos mock JSON + Firebase/Firestore
 - ✅ **Despliegue** - Configurado para Vercel
-- ✅ **Documentación** - Completa y actualizada
+- ✅ **Arquitectura limpia** - Separación clara de responsabilidades
+- ✅ **Manejo de errores** - Robustos y consistentes
+- ✅ **Validaciones** - Completas en todos los endpoints
 
 ## 🤝 Contribución
 
-1. **Fork** el repositorio
-2. **Crea una rama** para tu feature (`git checkout -b feature/nueva-funcionalidad`)
-3. **Commit** tus cambios (`git commit -am 'Agregar nueva funcionalidad'`)
-4. **Push** a la rama (`git push origin feature/nueva-funcionalidad`)
-5. **Crea un Pull Request**
+1. Fork el proyecto
+2. Crea una rama para tu feature (`git checkout -b feature/AmazingFeature`)
+3. Commit tus cambios (`git commit -m 'Add some AmazingFeature'`)
+4. Push a la rama (`git push origin feature/AmazingFeature`)
+5. Abre un Pull Request
 
 ## 📝 Licencia
 
-Este proyecto es parte del curso de Node.js de Talento Tech.
+Este proyecto es parte del curso de Node.js de Talento Tech. Este proyecto está bajo la Licencia MIT. Ver el archivo `LICENSE` para más detalles.
 
 ## 👨‍💻 Autor
 

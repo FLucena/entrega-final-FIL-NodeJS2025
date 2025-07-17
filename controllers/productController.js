@@ -21,7 +21,7 @@ export const getProductsController = async (req, res) => {
     const products = await getAllProducts();
     res.json(products);
   } catch (error) {
-    res.status(500).json({ error: 'Error al obtener los productos', message: error.message });
+    res.status(error.status || 500).json({ error: error.error || 'Error al obtener los productos', message: error.message });
   }
 };
 
@@ -29,12 +29,9 @@ export const getProductByIdController = async (req, res) => {
   try {
     const { id } = req.params;
     const product = await getProductById(id);
-    if (!product) {
-      return res.status(404).json({ error: 'Producto no encontrado', message: `No existe un producto con el ID: ${id}` });
-    }
     res.json({ message: 'Producto obtenido correctamente', product });
   } catch (error) {
-    res.status(500).json({ error: 'Error al obtener el producto', message: error.message });
+    res.status(error.status || 500).json({ error: error.error || 'Error al obtener el producto', message: error.message });
   }
 };
 
