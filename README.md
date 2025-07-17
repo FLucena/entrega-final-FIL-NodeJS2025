@@ -72,25 +72,38 @@ Este proyecto es una **API RESTful completa** desarrollada en Node.js para la ge
 ```
 Entrega-Final-FIL/
 ├── 📁 config/                 # Configuraciones (CORS, Firebase)
-├── 📁 controllers/            # Lógica de negocio
-│   ├── authController.js      # Autenticación (login/register)
-│   └── productController.js   # Gestión de productos
+├── 📁 controllers/            # Orquestadores de la lógica de negocio
+│   ├── authController.js      # Orquesta registro/login, delega a servicios
+│   └── productController.js   # Orquesta CRUD de productos, delega a servicios
 ├── 📁 data/                  # Datos mock (JSON)
 │   ├── mockProducts.json     # Productos de ejemplo para desarrollo
 │   └── mockUsers.json        # Usuarios de ejemplo para desarrollo
 ├── 📁 middleware/            # Middleware personalizado
 │   └── auth.js              # Verificación de JWT
-├── 📁 models/               # Modelos de datos
+├── 📁 models/               # Modelos de datos (mock local)
 │   ├── productModel.js      # Modelo de productos
 │   └── userModel.js         # Modelo de usuarios
 ├── 📁 routes/               # Definición de rutas
 │   ├── authRoutes.js        # Rutas de autenticación
 │   └── productRoutes.js     # Rutas de productos
-├── 📁 services/             # Servicios (Firestore)
+├── 📁 services/             # Lógica de negocio y acceso a datos
+│   ├── authService.js       # Lógica de registro/login, validaciones, mock y Firestore
+│   └── productService.js    # Lógica CRUD de productos, mock y Firestore
+├── 📁 utils/                # Utilidades reutilizables
+│   ├── validation.js        # Validaciones de email, password, campos, etc.
+│   └── jwt.js               # Funciones para generar/verificar tokens
 ├── 📄 index.js              # Punto de entrada del servidor
 ├── 📄 package.json          # Dependencias
 └── 📄 README.md             # Esta documentación
 ```
+
+### 🧩 Separación de responsabilidades
+
+- **Controladores**: Reciben la request, llaman al servicio correspondiente y devuelven la respuesta. No contienen lógica de negocio compleja.
+- **Servicios**: Implementan la lógica de negocio, validaciones, acceso a Firestore o mock, y devuelven los datos listos para responder.
+- **Utils**: Funciones reutilizables para validaciones y JWT.
+
+Esta organización facilita el mantenimiento, la escalabilidad y la legibilidad del código.
 
 ## 🛠️ Instalación y Configuración
 
