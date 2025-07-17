@@ -1,18 +1,12 @@
 import express from 'express';
 import cors from 'cors';
 import dotenv from 'dotenv';
-import { fileURLToPath } from 'url';
-import { dirname, join } from 'path';
 import productRoutes from './routes/productRoutes.js';
 import authRoutes from './routes/authRoutes.js';
-import { db } from './config/firebase.js';
 import rateLimit from 'express-rate-limit';
 import helmet from 'helmet';
 import corsOptions from './config/cors.js';
 import { createServer } from 'http';
-
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = dirname(__filename);
 
 dotenv.config();
 
