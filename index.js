@@ -22,8 +22,8 @@ const PORT = Number(process.env.PORT) || 3000;
 app.set('trust proxy', 1);
 
 const limiter = rateLimit({
-  windowMs: process.env.NODE_ENV === 'test' ? 1 : 15 * 60 * 1000,
-  max: process.env.NODE_ENV === 'test' ? 1000 : 100,
+  windowMs: 15 * 60 * 1000, // 15 minutos
+  max: 100, // máximo 100 requests por ventana
   message: 'Demasiadas solicitudes desde esta IP, por favor intente más tarde',
   standardHeaders: true,
   legacyHeaders: false,
@@ -31,8 +31,8 @@ const limiter = rateLimit({
 });
 
 const authLimiter = rateLimit({
-  windowMs: process.env.NODE_ENV === 'test' ? 1 : 60 * 60 * 1000,
-  max: process.env.NODE_ENV === 'test' ? 1000 : 5,
+  windowMs: 60 * 60 * 1000, // 1 hora
+  max: 5, // máximo 5 intentos de login por hora
   message: 'Demasiados intentos de inicio de sesión, por favor intente más tarde',
   standardHeaders: true,
   legacyHeaders: false,
@@ -152,12 +152,10 @@ const startServer = async (initialPort) => {
   }
 };
 
-if (process.env.NODE_ENV !== 'test') {
-  startServer(PORT).catch((error) => {
-    console.error('❌ Error fatal al iniciar el servidor:', error);
-    process.exit(1);
-  });
-}
+startServer(PORT).catch((error) => {
+  console.error('❌ Error fatal al iniciar el servidor:', error);
+  process.exit(1);
+});
 
 export { app };
 export default app;

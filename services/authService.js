@@ -1,7 +1,6 @@
 // --- Servicio de autenticación ---
 import { db } from '../config/firebase.js';
 import bcrypt from 'bcryptjs';
-import jwt from 'jsonwebtoken';
 import { readFile } from 'fs/promises';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
